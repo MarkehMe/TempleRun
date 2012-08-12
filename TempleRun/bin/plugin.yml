@@ -1,0 +1,48 @@
+name: TempleRun
+version: 1.0
+author: xapfeltortexp
+description: To see all Commands and their functions type /templerun
+
+website: http://LostForce.com
+
+main: com.xapfeltortexp.templerun.TempleRunMain
+
+commands:
+  templerun:
+    description: TempleRun Commands
+    aliases: [tr]
+permissions:
+  templerun.*:
+    description: Gives access to all TempleRun permissions
+    children:
+      templerun.join: true
+      templerun.leave: true
+      templerun.create: true
+      templerun.setcoins: true
+      templerun.bypass: true
+      templerun.kick: true
+  templerun.normal:
+    description: Gives access to the normal TempleRun Commands
+    children:
+      templerun.join: true
+      templerun.leave: true
+      templerun.help: true
+  templerun.join:
+    description: Allows you to join and use signs
+    default: op
+  templerun.leave:
+    description: Allows you to leave
+    default: op
+  templerun.create:
+    description: Allows you to create a sign
+    default: op
+  templerun.setcoins:
+    description: Allows you to set the Coins
+    default: op
+  templerun.create:
+    description: Allows you to use the Chat while being in TempelRun
+    default: op
+  templerun.kick:
+    description: Allows you to kick some Players who blocks the Templerun
+    default: op
+  
