@@ -1,7 +1,8 @@
 name: TempleRun
-version: 1.0
-author: xapfeltortexp
+version: 1.1.1
+author: [xapfeltortexp, KevTheCrafter]
 description: To see all Commands and their functions type /templerun
+depend: [Vault]
 
 website: http://LostForce.com
 
@@ -21,12 +22,16 @@ permissions:
       templerun.setcoins: true
       templerun.bypass: true
       templerun.kick: true
+      templerun.buy: true
+      templerun.addscore: true
+      templerun.reload: true
   templerun.normal:
     description: Gives access to the normal TempleRun Commands
     children:
       templerun.join: true
       templerun.leave: true
       templerun.help: true
+      templerun.buy: true
   templerun.join:
     description: Allows you to join and use signs
     default: op
@@ -45,4 +50,12 @@ permissions:
   templerun.kick:
     description: Allows you to kick some Players who blocks the Templerun
     default: op
-  
+  templerun.buy:
+    description: Allows you to buy an Item from your Score
+    default: op
+  templerun.addscore:
+    description: Allows you to add a Score
+    default: op
+  templerun.reload:
+    description: Allows you to reload the config
+    default: op 

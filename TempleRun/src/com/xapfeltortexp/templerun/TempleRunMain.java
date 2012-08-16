@@ -12,10 +12,15 @@ import com.xapfeltortexp.mexdb.MexDB;
 import com.xapfeltortexp.templerun.listener.TempleRunListener;
 import com.xapfeltortexp.templerun.listener.TempleRunSetCoinsListener;
 
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+import org.bukkit.plugin.RegisteredServiceProvider;
+
 public class TempleRunMain extends JavaPlugin {
 
 	// Strings
-	final static Logger log = Logger.getLogger("Minecraft");
+	final Logger log = Logger.getLogger("Minecraft");
 	private TempleRunCommands templerun;
 
 	// Database
@@ -30,10 +35,11 @@ public class TempleRunMain extends JavaPlugin {
 	// ArrayLists
 	public ArrayList<String> players = new ArrayList<String>();
 	public ArrayList<String> fall = new ArrayList<String>();
-	public ArrayList<String> move = new ArrayList<String>();
 	public ArrayList<String> walk = new ArrayList<String>();
+	public ArrayList<String> overGold = new ArrayList<String>();
 
-	// Integers + Booleans
+	// Integers
+	public int oldfood;
 	public int i;
 	public int number;
 	public int outOfWorld = 0;
@@ -43,6 +49,22 @@ public class TempleRunMain extends JavaPlugin {
 	public int Speed = 0;
 	public int points = 10;
 	public int SpeedOverDiamondBlock;
+	public int HowMuchPoints;
+	public int BuyItem;
+	public int BuyAmount;
+	public int money_a = 0;
+
+	// Boolean
+	public boolean moneyuse = false;
+	public boolean itemuse = false;
+	public long start;
+	public long stop;
+	public long ergebnis;
+
+	// Vault Register
+	public static Economy econ = null;
+	public static Permission perms = null;
+	public static Chat chat = null;
 
 	/*
 	 *  _____             _     _       
@@ -67,7 +89,7 @@ public class TempleRunMain extends JavaPlugin {
 
 		}
 
-		TempleRunMain.log.info("[TempleRun] Plugin + all Files loaded. Version: " + getDescription().getVersion());
+		this.log.info("[TempleRun] Plugin + all Files loaded. Version: " + getDescription().getVersion());
 
 		// Executor
 		templerun = new TempleRunCommands(this);
@@ -82,25 +104,14 @@ public class TempleRunMain extends JavaPlugin {
 		this.points = 0;
 
 		// Config
-		getConfig().options().header("Plugin developed by xapfeltortexp | www.LostForce.com | Skype: jan_hoeck\n\nOutOfWorld = The BlockY. When you fall under this BlockHigh, then you\nfailed TempleRun.");
-		if (getConfig().get("TempleRun.OutOfWorld") == null)
-			getConfig().set("TempleRun.OutOfWorld", 5);
-		if (getConfig().get("TempleRun.ItemWhenYouWin.Item") == null)
-			getConfig().set("TempleRun.ItemWhenYouWin.Item", 264);
-		if (getConfig().get("TempleRun.ItemWhenYouWin.Amount") == null)
-			getConfig().set("TempleRun.ItemWhenYouWin.Amount", 1);
-		if (getConfig().get("TempleRun.RunSpeed.Speed") == null)
-			getConfig().set("TempleRun.RunSpeed.Speed", 2);
-		if (getConfig().get("TempleRun.RunSpeed.SpeedOverDiamondBlock") == null)
-			getConfig().set("TempleRun.RunSpeed.SpeedOverDiamondBlock", 4);
+		this.getConfig().options().copyDefaults(true);
 		saveConfig();
 
-		// Variablen zur config
-		outOfWorld = getConfig().getInt("TempleRun.OutOfWorld", 5);
-		Item = getConfig().getInt("TempleRun.ItemWhenYouWin.Item", 264);
-		Amount = getConfig().getInt("TempleRun.ItemWhenYouWin.Amount", 1);
-		Speed = getConfig().getInt("TempleRun.RunSpeed.Speed", 2);
-		SpeedOverDiamondBlock = getConfig().getInt("TempleRun.RunSpeed.SpeedOverDiamondBlock", 4);
+		// Variablen aus der Config lesen
+		load_config();
+
+		setupEconomy();
+
 	}
 
 	/*
@@ -113,7 +124,7 @@ public class TempleRunMain extends JavaPlugin {
 	@Override
 	public void onDisable() {
 
-		TempleRunMain.log.info("[TempleRun] Plugin + all Files unloaded.");
+		this.log.info("[TempleRun] Plugin + all Files unloaded.");
 
 		for (int k = 0; k < players.size(); k++) {
 			getServer().getPlayer(players.get(k)).setSprinting(false);
@@ -124,9 +135,36 @@ public class TempleRunMain extends JavaPlugin {
 
 		}
 		this.players.clear();
+		getServer().getScheduler().cancelAllTasks();
 
-		this.move.clear();
+	}
 
+	// Vault Sachen :D
+	private boolean setupEconomy() {
+		if (getServer().getPluginManager().getPlugin("Vault") == null) {
+			return false;
+		}
+		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		if (rsp == null) {
+			return false;
+		}
+		econ = rsp.getProvider();
+		return econ != null;
+	}
+
+	public void load_config() {
+		// Variablen zur config
+		outOfWorld = getConfig().getInt("OutOfWorld", 5);
+		Item = getConfig().getInt("Win.Item.Item", 264);
+		Amount = getConfig().getInt("Win.Item.Amount", 1);
+		Speed = getConfig().getInt("RunSpeed.Speed", 2);
+		SpeedOverDiamondBlock = getConfig().getInt("RunSpeed.SpeedOverDiamondBlock", 4);
+		HowMuchPoints = getConfig().getInt("BuyPoints.HowMuchPoints", 10);
+		BuyItem = getConfig().getInt("BuyPoints.ButItem", 276);
+		BuyAmount = getConfig().getInt("BuyPoints.ButAmount", 1);
+		moneyuse = getConfig().getBoolean("Money.use", false);
+		itemuse = getConfig().getBoolean("Win.Item.use", false);
+		money_a = getConfig().getInt("Win.Money.Amount", 20);
 	}
 
 }

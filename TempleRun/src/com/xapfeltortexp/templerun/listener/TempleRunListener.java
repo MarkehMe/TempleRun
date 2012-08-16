@@ -27,6 +27,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.xapfeltortexp.mexdb.exception.EmptyIndexException;
 import com.xapfeltortexp.mexdb.system.Entry;
 import com.xapfeltortexp.templerun.TempleRunMain;
+import net.milkbowl.vault.economy.EconomyResponse;
 
 public class TempleRunListener implements Listener {
 
@@ -38,8 +39,7 @@ public class TempleRunListener implements Listener {
 	/**
 	 * Register the Listener.
 	 */
-	
-	
+
 	public TempleRunMain plugin;
 
 	public TempleRunListener(TempleRunMain plugin) {
@@ -57,6 +57,7 @@ public class TempleRunListener implements Listener {
 		if (plugin.players.contains(player.getName())) {
 			plugin.i--;
 			plugin.players.remove(player.getName());
+			player.removePotionEffect(PotionEffectType.SPEED);
 		}
 	}
 
@@ -156,10 +157,13 @@ public class TempleRunListener implements Listener {
 				return;
 			}
 			// Messages
+			player.setFoodLevel(plugin.oldfood);
+			plugin.oldfood = 0;
 			player.sendMessage(prefix);
-			player.sendMessage(ChatColor.RED + "You finished the TempleRun and you got " + ChatColor.GREEN + this.plugin.Amount + ChatColor.RED + " of the Item " + ChatColor.GREEN + this.plugin.Item);
 			player.removePotionEffect(PotionEffectType.SPEED);
 			player.sendMessage(ChatColor.RED + "Your Points: " + ChatColor.GREEN + plugin.points + "0");
+			plugin.stop = System.currentTimeMillis();
+			plugin.ergebnis = plugin.stop - plugin.start;
 
 			// Clear ArrayList + Integers
 			this.plugin.i--;
@@ -167,7 +171,19 @@ public class TempleRunListener implements Listener {
 			plugin.points = 0;
 			plugin.walk.clear();
 			player.teleport(player.getWorld().getSpawnLocation());
-			player.getInventory().addItem(new ItemStack[] { new ItemStack(this.plugin.Item, this.plugin.Amount) });
+
+			// Belohnung geben
+			if (plugin.moneyuse == true) {
+				@SuppressWarnings("unused")
+				EconomyResponse r = TempleRunMain.econ.depositPlayer(player.getName(), plugin.money_a);
+				player.sendMessage(ChatColor.RED + "You finished the TempleRun and you got " + ChatColor.GREEN + plugin.money_a + ChatColor.RED + "$");
+			}
+			if (plugin.itemuse == true) {
+				player.getInventory().addItem(new ItemStack[] { new ItemStack(this.plugin.Item, this.plugin.Amount) });
+				player.sendMessage(ChatColor.RED + "You finished the TempleRun and you got " + ChatColor.GREEN + this.plugin.Amount + ChatColor.RED + " of the Item " + ChatColor.GREEN + this.plugin.Item);
+				event.getPlayer().updateInventory();
+			}
+
 			player.setSprinting(false);
 
 			// Database
@@ -180,8 +196,8 @@ public class TempleRunListener implements Listener {
 			entry.addValue("score", Integer.valueOf(score));
 			this.plugin.database.addEntry(entry);
 			this.plugin.database.push();
-			event.getPlayer().updateInventory();
 		}
+
 	}
 
 	// Are you fell out of the World?
@@ -203,6 +219,8 @@ public class TempleRunListener implements Listener {
 			player.removePotionEffect(PotionEffectType.SPEED);
 			plugin.players.remove(player.getName());
 			event.setTo(player.getWorld().getSpawnLocation());
+			plugin.ergebnis = 0;
+			plugin.start = 0;
 		}
 	}
 
