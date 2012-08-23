@@ -53,6 +53,7 @@ public class TempleRunMain extends JavaPlugin {
 	public int BuyItem;
 	public int BuyAmount;
 	public int money_a = 0;
+	public double SpeedOverEmeraldBlock;
 
 	// Boolean
 	public boolean moneyuse = false;
@@ -165,6 +166,7 @@ public class TempleRunMain extends JavaPlugin {
 		moneyuse = getConfig().getBoolean("Money.use", false);
 		itemuse = getConfig().getBoolean("Win.Item.use", false);
 		money_a = getConfig().getInt("Win.Money.Amount", 20);
+		SpeedOverEmeraldBlock = getConfig().getDouble("RunSpeed.SpeedOverEmeraldBlock", 0.5);
 	}
 
 }

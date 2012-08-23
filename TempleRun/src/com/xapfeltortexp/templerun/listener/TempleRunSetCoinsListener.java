@@ -51,12 +51,12 @@ public class TempleRunSetCoinsListener implements Listener {
 			return;
 		}
 		if (event.getPlayer().getLocation().add(0D, -1D, 0D).getBlock().getType() == Material.GOLD_BLOCK) {
-			player.playEffect(player.getEyeLocation(), Effect.POTION_BREAK, 5);
 			if(plugin.overGold.contains(player.getName())) {
 				return;
 			}
 			plugin.overGold.add(player.getName());
 			plugin.points++;
+			player.playEffect(player.getEyeLocation(), Effect.POTION_BREAK, 5);
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
 				@Override
@@ -79,6 +79,28 @@ public class TempleRunSetCoinsListener implements Listener {
 		if (event.getPlayer().getLocation().add(0D, -1D, 0D).getBlock().getType() == Material.DIAMOND_BLOCK) {
 			player.removePotionEffect(PotionEffectType.SPEED);
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 42, plugin.SpeedOverDiamondBlock));
+			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+				@Override
+				public void run() {
+					player.removePotionEffect(PotionEffectType.SPEED);
+					player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 240000, plugin.Speed));
+
+				}
+			}, 42L);
+		}
+
+	}
+	// Running over the Diamond Block
+	@EventHandler
+	public void onPlayerMoveRedstone(final PlayerMoveEvent event) {
+		final Player player = event.getPlayer();
+		if (!plugin.players.contains(player.getName())) {
+			return;
+		}
+		if (event.getPlayer().getLocation().add(0D, -1D, 0D).getBlock().getType() == Material.EMERALD_BLOCK) {
+			player.removePotionEffect(PotionEffectType.SPEED);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, (int) plugin.SpeedOverEmeraldBlock));
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
 				@Override
