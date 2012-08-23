@@ -14,6 +14,7 @@ OutOfWorld: 5
 RunSpeed:
   Speed: 2
   SpeedOverDiamondBlock: 4
+  SpeedOverEmeraldBlock: 0.5
 BuyPoints:
   HowMuchPoints: 10
   BuyItem: 276

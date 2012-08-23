@@ -101,11 +101,13 @@ public class TempleRunSetCoinsListener implements Listener {
 		if (event.getPlayer().getLocation().add(0D, -1D, 0D).getBlock().getType() == Material.EMERALD_BLOCK) {
 			player.removePotionEffect(PotionEffectType.SPEED);
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, (int) plugin.SpeedOverEmeraldBlock));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 1));
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
 				@Override
 				public void run() {
 					player.removePotionEffect(PotionEffectType.SPEED);
+					player.removePotionEffect(PotionEffectType.BLINDNESS);
 					player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 240000, plugin.Speed));
 
 				}
