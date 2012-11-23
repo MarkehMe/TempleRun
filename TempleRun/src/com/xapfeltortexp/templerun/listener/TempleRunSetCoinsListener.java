@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.xapfeltortexp.templerun.TempleRunMain;
+import com.xapfeltortexp.TempleRunMain;
 
 public class TempleRunSetCoinsListener implements Listener {
 

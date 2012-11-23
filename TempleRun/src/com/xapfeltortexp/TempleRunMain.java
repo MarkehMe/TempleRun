@@ -1,4 +1,4 @@
-package com.xapfeltortexp.templerun;
+package com.xapfeltortexp;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,19 +9,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 
 import com.xapfeltortexp.mexdb.MexDB;
+import com.xapfeltortexp.templerun.Metrics;
+import com.xapfeltortexp.templerun.TempleRunCommands;
 import com.xapfeltortexp.templerun.listener.TempleRunListener;
 import com.xapfeltortexp.templerun.listener.TempleRunSetCoinsListener;
-
-import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class TempleRunMain extends JavaPlugin {
 
 	// Strings
 	final Logger log = Logger.getLogger("Minecraft");
-	private TempleRunCommands templerun;
 
 	// Database
 	public MexDB database;
@@ -52,20 +48,13 @@ public class TempleRunMain extends JavaPlugin {
 	public int HowMuchPoints;
 	public int BuyItem;
 	public int BuyAmount;
-	public int money_a = 0;
 	public double SpeedOverEmeraldBlock;
 
 	// Boolean
-	public boolean moneyuse = false;
 	public boolean itemuse = false;
 	public long start;
 	public long stop;
 	public long ergebnis;
-
-	// Vault Register
-	public static Economy econ = null;
-	public static Permission perms = null;
-	public static Chat chat = null;
 
 	/*
 	 *  _____             _     _       
@@ -93,8 +82,7 @@ public class TempleRunMain extends JavaPlugin {
 		this.log.info("[TempleRun] Plugin + all Files loaded. Version: " + getDescription().getVersion());
 
 		// Executor
-		templerun = new TempleRunCommands(this);
-		getCommand("templerun").setExecutor(templerun);
+		getCommand("templerun").setExecutor(new TempleRunCommands(this));
 
 		// Register Listener
 		getServer().getPluginManager().registerEvents(new TempleRunListener(this), this);
@@ -110,8 +98,6 @@ public class TempleRunMain extends JavaPlugin {
 
 		// Variablen aus der Config lesen
 		load_config();
-
-		setupEconomy();
 
 	}
 
@@ -140,18 +126,6 @@ public class TempleRunMain extends JavaPlugin {
 
 	}
 
-	// Vault Sachen :D
-	private boolean setupEconomy() {
-		if (getServer().getPluginManager().getPlugin("Vault") == null) {
-			return false;
-		}
-		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-		if (rsp == null) {
-			return false;
-		}
-		econ = rsp.getProvider();
-		return econ != null;
-	}
 
 	public void load_config() {
 		// Variablen zur config
@@ -163,9 +137,7 @@ public class TempleRunMain extends JavaPlugin {
 		HowMuchPoints = getConfig().getInt("BuyPoints.HowMuchPoints", 10);
 		BuyItem = getConfig().getInt("BuyPoints.ButItem", 276);
 		BuyAmount = getConfig().getInt("BuyPoints.ButAmount", 1);
-		moneyuse = getConfig().getBoolean("Money.use", false);
 		itemuse = getConfig().getBoolean("Win.Item.use", false);
-		money_a = getConfig().getInt("Win.Money.Amount", 20);
 		SpeedOverEmeraldBlock = getConfig().getDouble("RunSpeed.SpeedOverEmeraldBlock", 0.5);
 	}
 

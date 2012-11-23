@@ -12,6 +12,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.xapfeltortexp.TempleRunMain;
 import com.xapfeltortexp.mexdb.exception.EmptyIndexException;
 import com.xapfeltortexp.mexdb.system.Entry;
 
@@ -232,7 +233,7 @@ public class TempleRunCommands implements CommandExecutor {
 				 * / __|/ _ \ __/ __| '_ \ / _` \ \ /\ / / '_ \ 
 				 * \__ \  __/ |_\__ \ |_) | (_| |\ V  V /| | | |
 				 * |___/\___|\__|___/ .__/ \__,_| \_/\_/ |_| |_|
-				 *                 |_|                         
+				 *                  |_|                         
 				 * 
 				 */
 				if (args[0].equalsIgnoreCase("setspawn")) {

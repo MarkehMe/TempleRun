@@ -1,12 +1,11 @@
 name: TempleRun
-version: 1.2
-author: [xapfeltortexp, KevTheCrafter]
+version: 1.6
+author: [xapfeltortexp]
 description: To see all Commands and their functions type /templerun
-depend: [Vault]
 
 website: http://LostForce.com
 
-main: com.xapfeltortexp.templerun.TempleRunMain
+main: com.xapfeltortexp.TempleRunMain
 
 commands:
   templerun:

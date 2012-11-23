@@ -24,10 +24,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
+import com.xapfeltortexp.TempleRunMain;
 import com.xapfeltortexp.mexdb.exception.EmptyIndexException;
 import com.xapfeltortexp.mexdb.system.Entry;
-import com.xapfeltortexp.templerun.TempleRunMain;
-import net.milkbowl.vault.economy.EconomyResponse;
 
 public class TempleRunListener implements Listener {
 
@@ -88,20 +87,18 @@ public class TempleRunListener implements Listener {
 		Player player = event.getPlayer();
 		String name = player.getName();
 
-		if (player.hasPermission("templerun.bypass")) {
-			return;
-		}
 		if (plugin.players.contains(name)) {
+			
+			if (player.hasPermission("templerun.bypass")) {
+				return;
+			}
+			
+			if(!event.getMessage().startsWith("/templerun") || !event.getMessage().startsWith("/tr")) {
+				event.setCancelled(true);
+				player.sendMessage(prefix + ChatColor.RED + "You dont have Permissions.");
+			}
 			return;
 		}
-		String msg = event.getMessage();
-		String[] frag = msg.split(" ");
-
-		if ((!frag[0].equalsIgnoreCase("/templerun")) || (!frag[0].equalsIgnoreCase("/tr"))) {
-			return;
-		}
-		event.setCancelled(true);
-		player.sendMessage(prefix + ChatColor.RED + "You can just execute TempleRun Commands while playing.");
 	}
 
 	// FoodLevelChange Event
@@ -109,7 +106,6 @@ public class TempleRunListener implements Listener {
 	public void onFoodLevelChange(final FoodLevelChangeEvent event) {
 		final Player player = (Player) event.getEntity();
 		if (plugin.players.contains(player.getName())) {
-			event.setFoodLevel(20);
 			event.setCancelled(true);
 		}
 	}
@@ -172,12 +168,6 @@ public class TempleRunListener implements Listener {
 			plugin.walk.clear();
 			player.teleport(player.getWorld().getSpawnLocation());
 
-			// Belohnung geben
-			if (plugin.moneyuse == true) {
-				@SuppressWarnings("unused")
-				EconomyResponse r = TempleRunMain.econ.depositPlayer(player.getName(), plugin.money_a);
-				player.sendMessage(ChatColor.RED + "You finished the TempleRun and you got " + ChatColor.GREEN + plugin.money_a + ChatColor.RED + "$");
-			}
 			if (plugin.itemuse == true) {
 				player.getInventory().addItem(new ItemStack[] { new ItemStack(this.plugin.Item, this.plugin.Amount) });
 				player.sendMessage(ChatColor.RED + "You finished the TempleRun and you got " + ChatColor.GREEN + this.plugin.Amount + ChatColor.RED + " of the Item " + ChatColor.GREEN + this.plugin.Item);
