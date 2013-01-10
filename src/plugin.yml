@@ -1,0 +1,11 @@
+name: TempleRun
+version: 1.0
+author: xapfeltortexp
+website: www.LostForce.com
+
+main: TempleRun.TempleRun
+
+commands:
+  templerun:
+    description: TempleRun Command
+    aliases: tr
