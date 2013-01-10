@@ -86,7 +86,7 @@ public class PlayerCommands implements CommandExecutor {
 				 Util.teleport(player, loc);
 				 Util.removePlayer(player.getName());
 				 player.sendMessage(prefix + "You leaved TempleRun and got teleported back to your old Location!");
-				 
+				 player.removePotionEffect(PotionEffectType.SPEED);
 			 
 			 } else if(args[0].equalsIgnoreCase("set")) {
 				 
@@ -148,7 +148,7 @@ public class PlayerCommands implements CommandExecutor {
 					 return true;
 				 }
 				 
-				 if(args.length == 3) {
+				 if(args.length == 2) {
 					 
 					 Player p = main.getServer().getPlayer(args[1]);
 					 

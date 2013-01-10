@@ -39,33 +39,41 @@ public class PlayerMoveListener implements Listener {
 
 			if (blockface.getType() == Material.GOLD_BLOCK) {
 
-				if (Util.isWalkedOver(player.getName(), x, y)) {
+				if (Util.isWalkedOver(player.getName(), x, z)) {
 					return;
 				}
 
 				Location loc = new Location(main.getServer().getWorld(world), x, y, z);
 
-				Util.addLocation(player.getName(), x, y);
+				Util.addLocation(player.getName(), x, z);
 
 				main.getServer().getWorld(world).playEffect(loc, Effect.POTION_BREAK, 2);
-			} else if(blockface.getType() == Material.DIAMOND_BLOCK) {
+			} else if (blockface.getType() == Material.DIAMOND_BLOCK) {
 				
-				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3, 4));
+				if(Util.isWalkedDiamond(player.getName(), x, z)) {
+					return;
+				}
 				
+				player.removePotionEffect(PotionEffectType.SPEED);
+				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 240000, 4));
+
+				Util.addDiamondBlock(player.getName(), x, z);
+
 				main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
-					
+
 					@Override
 					public void run() {
-						
+
 						player.removePotionEffect(PotionEffectType.SPEED);
 						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 						
 					}
 				}, 60L);
-			} else if(blockface.isLiquid()) {
-				
+			} else if (player.getLocation().getBlock().isLiquid()) {
+
 				Util.kickPlayer(player);
 				player.sendMessage(Util.prefix + "You felt out of TempleRun. Failed!");
+				player.removePotionEffect(PotionEffectType.SPEED);
 			}
 		}
 

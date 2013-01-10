@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffectType;
 
 import TempleRun.TempleRun;
 
@@ -24,6 +25,8 @@ public class Util {
 	public static HashMap<String, Location> oldLoc = new HashMap<String, Location>();
 	public static HashMap<Integer, Integer> firstblock = new HashMap<Integer, Integer>();
 	public static HashMap<String, HashMap<Integer, Integer>> blocks = new HashMap<String, HashMap<Integer, Integer>>();
+	public static HashMap<String, HashMap<Integer, Integer>> diamond = new HashMap<String, HashMap<Integer, Integer>>();
+	public static HashMap<String, Integer> coins = new HashMap<String, Integer>();
 
 	/* Boolean damit das dem Spiel joinen kann */
 	public static boolean game = true;
@@ -40,7 +43,9 @@ public class Util {
 		players.remove(player);
 		oldLoc.remove(player);
 		blocks.remove(player);
+		diamond.remove(player);
 		firstblock.clear();
+		coins.remove(player);
 	}
 
 	/* Den Spieler aus TempleRun herraus schmeisen */
@@ -48,6 +53,8 @@ public class Util {
 		players.put(player, time);
 		oldLoc.put(player, p.getLocation());
 		blocks.put(player, firstblock);
+		diamond.put(player, firstblock);
+		coins.put(player, 0);
 	}
 
 	/* Spieler zu TempleRun teleportieren */
@@ -114,6 +121,8 @@ public class Util {
 			String s = p.getName();
 			if (isPlaying(s)) {
 				
+				p.removePotionEffect(PotionEffectType.SPEED);
+				
 				Location loc = getOldLocation(s);
 				teleport(p, loc);
 				removePlayer(s);
@@ -165,12 +174,24 @@ public class Util {
 		removePlayer(player.getName());
 	}
 	
-	public static void addLocation(String player, int x, int y) {
-		blocks.get(player).put(x, y);
+	public static void addLocation(String player, int x, int z) {
+		blocks.get(player).put(x, z);
+		int oldCoins = coins.get(player);
+		coins.put(player, oldCoins + 1);
 	}
 	
-	public static boolean isWalkedOver(String player, int x, int y) {	
-		if(blocks.get(player).containsKey(x) && blocks.get(player).get(x) == y)
+	public static void addDiamondBlock(String player, int x, int z) {
+		diamond.get(player).put(x, z);
+	}
+	
+	public static boolean isWalkedDiamond(String player, int x, int z) {
+		if(diamond.get(player).containsKey(x) && diamond.get(player).containsValue(z))
+			return true;
+		return false;
+	}
+	
+	public static boolean isWalkedOver(String player, int x, int z) {	
+		if(blocks.get(player).containsKey(x) && blocks.get(player).containsValue(z))
 			return true;
 		return false;
 	}

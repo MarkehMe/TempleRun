@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import TempleRun.TempleRun;
 import TempleRun.Util.Util;
@@ -74,19 +75,21 @@ public class PlayerSignListener implements Listener {
 				player.sendMessage(prefix + "You dont play TempleRun at the Moment!");
 				return;
 			}
-
+			
 			Location loc = Util.getOldLocation(player.getName());
 
 			long time = Util.getTime(player.getName()) / 1000;
 			long now = System.currentTimeMillis() / 1000;
 			long ergebnis = now - time;
 			
-			int coins = Util.blocks.get(player.getName()).size();
+			int coins = Util.coins.get(player.getName());
 
 			Util.teleport(player, loc);
 			Util.removePlayer(player.getName());
 			
 			Util.sendWinItems(player);
+			
+			player.removePotionEffect(PotionEffectType.SPEED);
 			
 			player.sendMessage(prefix + "You finished TempleRun!");
 			player.sendMessage(ChatColor.GRAY + "You Time: " + ChatColor.GREEN + ergebnis + " seconds!");

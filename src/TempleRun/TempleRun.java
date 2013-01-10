@@ -70,6 +70,8 @@ public class TempleRun extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		
+		Util.kickAll(this, Util.prefix + "The Server got reloaded!");
+		
 	}
 	
 	/* Config */
