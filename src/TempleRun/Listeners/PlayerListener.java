@@ -69,7 +69,7 @@ public class PlayerListener implements Listener {
 
 		if (Util.isPlaying(player.getName())) {
 
-			if (!event.getMessage().startsWith("/templerun") || !event.getMessage().startsWith("/tr")) {
+			if (!event.getMessage().startsWith("/tr") && !event.getMessage().startsWith("/templerun")) {
 				player.sendMessage(Util.prefix + "You can just execute TempleRun Commands in TempleRun!");
 				event.setCancelled(true);
 			}

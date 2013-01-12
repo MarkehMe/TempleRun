@@ -23,10 +23,11 @@ public class Util {
 
 	public static HashMap<String, Long> players = new HashMap<String, Long>();
 	public static HashMap<String, Location> oldLoc = new HashMap<String, Location>();
-	public static HashMap<Integer, Integer> firstblock = new HashMap<Integer, Integer>();
-	public static HashMap<String, HashMap<Integer, Integer>> blocks = new HashMap<String, HashMap<Integer, Integer>>();
 	public static HashMap<String, HashMap<Integer, Integer>> diamond = new HashMap<String, HashMap<Integer, Integer>>();
 	public static HashMap<String, Integer> coins = new HashMap<String, Integer>();
+	
+	public static HashMap<String, HashMap<Integer, Integer>> Zblocks = new HashMap<String, HashMap<Integer, Integer>>();
+	public static HashMap<String, HashMap<Integer, Integer>> Xblocks = new HashMap<String, HashMap<Integer, Integer>>();
 
 	/* Boolean damit das dem Spiel joinen kann */
 	public static boolean game = true;
@@ -42,9 +43,9 @@ public class Util {
 	public static void removePlayer(String player) {
 		players.remove(player);
 		oldLoc.remove(player);
-		blocks.remove(player);
+		Xblocks.remove(player);
+		Zblocks.remove(player);
 		diamond.remove(player);
-		firstblock.clear();
 		coins.remove(player);
 	}
 
@@ -52,8 +53,11 @@ public class Util {
 	public static void addPlayer(String player, long time, Player p) {
 		players.put(player, time);
 		oldLoc.put(player, p.getLocation());
-		blocks.put(player, firstblock);
-		diamond.put(player, firstblock);
+		Xblocks.put(player, new HashMap<Integer, Integer>());
+		Zblocks.put(player, new HashMap<Integer, Integer>());
+		Xblocks.get(player).put(0, 5);
+		Zblocks.get(player).put(0, 6);
+		diamond.put(player, new HashMap<Integer, Integer>());
 		coins.put(player, 0);
 	}
 
@@ -175,9 +179,11 @@ public class Util {
 	}
 	
 	public static void addLocation(String player, int x, int z) {
-		blocks.get(player).put(x, z);
 		int oldCoins = coins.get(player);
 		coins.put(player, oldCoins + 1);
+		
+		Zblocks.get(player).put(coins.get(player), z);
+		Xblocks.get(player).put(coins.get(player), x);
 	}
 	
 	public static void addDiamondBlock(String player, int x, int z) {
@@ -190,8 +196,8 @@ public class Util {
 		return false;
 	}
 	
-	public static boolean isWalkedOver(String player, int x, int z) {	
-		if(blocks.get(player).containsKey(x) && blocks.get(player).containsValue(z))
+	public static boolean isWalkedOver(String player, int x, int z) {
+		if(Xblocks.get(player).containsValue(x) && Zblocks.get(player).containsValue(z))
 			return true;
 		return false;
 	}

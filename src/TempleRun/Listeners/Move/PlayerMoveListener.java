@@ -1,8 +1,8 @@
 package TempleRun.Listeners.Move;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -47,12 +47,15 @@ public class PlayerMoveListener implements Listener {
 
 				Util.addLocation(player.getName(), x, z);
 
-				main.getServer().getWorld(world).playEffect(loc, Effect.POTION_BREAK, 2);
+				player.playSound(loc, Sound.ORB_PICKUP, (float) 2, (float) 4);
 			} else if (blockface.getType() == Material.DIAMOND_BLOCK) {
 				
 				if(Util.isWalkedDiamond(player.getName(), x, z)) {
 					return;
 				}
+				
+				Location loc = new Location(main.getServer().getWorld(world), x, y, z);
+				player.playSound(loc, Sound.EXPLODE, (float) 2, (float) 4);
 				
 				player.removePotionEffect(PotionEffectType.SPEED);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 240000, 4));
