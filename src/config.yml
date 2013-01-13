@@ -2,3 +2,7 @@ TempleRun:
   WinItem:
   - 264,4
   KickPlayers: true
+  SafeCheckPointAt:
+  - 10
+  - 15
+  - 20

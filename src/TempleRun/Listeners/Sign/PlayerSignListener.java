@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import TempleRun.TempleRun;
@@ -87,8 +88,16 @@ public class PlayerSignListener implements Listener {
 			Util.teleport(player, loc);
 			Util.removePlayer(player.getName());
 			
+			if(Util.checkpoint.containsKey(player.getName()))
+				Util.checkpoint.remove(player.getName());
+			
 			Util.sendWinItems(player);
 			
+			if(main.getServer().getScheduler().isCurrentlyRunning(main.task)) {
+				main.getServer().getScheduler().cancelTask(main.task);
+			}
+			
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 			player.removePotionEffect(PotionEffectType.SPEED);
 			
 			player.sendMessage(prefix + "You finished TempleRun!");

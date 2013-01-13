@@ -44,39 +44,57 @@ public class PlayerMoveListener implements Listener {
 				}
 
 				Location loc = new Location(main.getServer().getWorld(world), x, y, z);
-
+				
+				Util.addCoin(player);
 				Util.addLocation(player.getName(), x, z);
 
 				player.playSound(loc, Sound.ORB_PICKUP, (float) 2, (float) 4);
 			} else if (blockface.getType() == Material.DIAMOND_BLOCK) {
-				
-				if(Util.isWalkedDiamond(player.getName(), x, z)) {
+
+				if (Util.isWalkedDiamond(player.getName(), x, z)) {
 					return;
 				}
-				
+
 				Location loc = new Location(main.getServer().getWorld(world), x, y, z);
 				player.playSound(loc, Sound.EXPLODE, (float) 2, (float) 4);
-				
+
 				player.removePotionEffect(PotionEffectType.SPEED);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 240000, 4));
 
 				Util.addDiamondBlock(player.getName(), x, z);
 
-				main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+				main.task = main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 
 					@Override
 					public void run() {
 
 						player.removePotionEffect(PotionEffectType.SPEED);
 						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
-						
+
 					}
 				}, 60L);
 			} else if (player.getLocation().getBlock().isLiquid()) {
 
-				Util.kickPlayer(player);
-				player.sendMessage(Util.prefix + "You felt out of TempleRun. Failed!");
+				Util.removePlayer(player.getName());
+				
+				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 				player.removePotionEffect(PotionEffectType.SPEED);
+
+				long time = System.currentTimeMillis();
+
+				Util.addPlayer(player.getName(), time, player);
+				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
+				
+				if(Util.hasCheckPoint(player.getName())) {
+					Location loc = Util.getCheckPoint(player.getName());
+					player.teleport(loc);
+					Util.checkpoint.remove(player.getName());
+					player.sendMessage(Util.prefix + "You felt out of TempleRun. Try again at your CheckPoint!!");
+					return;
+				}
+				
+				Util.teleport(player, Util.getSpawnLocation(main));
+				player.sendMessage(Util.prefix + "You felt out of TempleRun. Try again!");
 			}
 		}
 

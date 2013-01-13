@@ -1,7 +1,6 @@
 package TempleRun.Util;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -20,12 +19,14 @@ public class Util {
 	public Util(TempleRun main) {
 		Util.main = main;
 	}
-
+	
 	public static HashMap<String, Long> players = new HashMap<String, Long>();
 	public static HashMap<String, Location> oldLoc = new HashMap<String, Location>();
 	public static HashMap<String, HashMap<Integer, Integer>> diamond = new HashMap<String, HashMap<Integer, Integer>>();
 	public static HashMap<String, Integer> coins = new HashMap<String, Integer>();
-	
+
+	public static HashMap<String, Location> checkpoint = new HashMap<String, Location>();
+
 	public static HashMap<String, HashMap<Integer, Integer>> Zblocks = new HashMap<String, HashMap<Integer, Integer>>();
 	public static HashMap<String, HashMap<Integer, Integer>> Xblocks = new HashMap<String, HashMap<Integer, Integer>>();
 
@@ -124,18 +125,19 @@ public class Util {
 
 			String s = p.getName();
 			if (isPlaying(s)) {
-				
+
 				p.removePotionEffect(PotionEffectType.SPEED);
-				
+
 				Location loc = getOldLocation(s);
 				teleport(p, loc);
 				removePlayer(s);
-				
+
 				p.sendMessage(message);
 			}
 		}
 		players.clear();
 		oldLoc.clear();
+		checkpoint.clear();
 
 	}
 
@@ -168,79 +170,154 @@ public class Util {
 			return true;
 		return false;
 	}
-	
+
 	/* Kickt einen Spieler */
 	public static void kickPlayer(Player player) {
-		
+
 		Location loc = getOldLocation(player.getName());
 		teleport(player, loc);
-		
+
 		removePlayer(player.getName());
 	}
-	
+
+	/**
+	 * 
+	 * @param player
+	 * @param x
+	 * @param z
+	 */
 	public static void addLocation(String player, int x, int z) {
-		int oldCoins = coins.get(player);
-		coins.put(player, oldCoins + 1);
-		
 		Zblocks.get(player).put(coins.get(player), z);
 		Xblocks.get(player).put(coins.get(player), x);
 	}
-	
-	public static void addDiamondBlock(String player, int x, int z) {
-		diamond.get(player).put(x, z);
-	}
-	
-	public static boolean isWalkedDiamond(String player, int x, int z) {
-		if(diamond.get(player).containsKey(x) && diamond.get(player).containsValue(z))
-			return true;
-		return false;
-	}
-	
-	public static boolean isWalkedOver(String player, int x, int z) {
-		if(Xblocks.get(player).containsValue(x) && Zblocks.get(player).containsValue(z))
-			return true;
-		return false;
-	}
-	
-	public static void helpMenu(Player player) {
-		 player.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun by §c§lxapfeltortexp" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "]");
-		 player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr join             " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Join TempleRun");
-		 player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr leave           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Leave TempleRun");
-		 player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr set spawn     " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Set the TempleRun Spawn");
-		 player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr stop            " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Stop TempleRun");
-		 player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr start           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Start TempleRun");
-		 player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr kick [PLAYER] " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Kick Player out of TempleRun");
-	}
-	
-	public static void sendWinItems(Player player) {
+
+	/**
+	 * 
+	 * @param player
+	 */
+	public static void addCoin(Player player) {
+		int oldCoins = coins.get(player.getName());
+		coins.put(player.getName(), oldCoins + 1);
 		
-		List<String> items = main.getConfig().getStringList("TempleRun.WinItem");
-		
-		if(items == null) {
+		if (main.safepoints.isEmpty()) {
+			player.sendMessage("is Empty");
 			return;
 		}
 		
-		for(String s : items) {
+		for(String s : main.safepoints) {
 			
-			if(!s.contains(",")) {
-				continue;
-			} else {
-				String[] all = s.split(",");
+			try {
 				
-				int item = 0, amount = 0;
+				int i = Integer.parseInt(s);
 				
-				try {
-					item = Integer.parseInt(all[0]);
-					amount = Integer.parseInt(all[1]);
-				} catch(NumberFormatException e) {
-					e.printStackTrace();
+				if(coins.get(player.getName()) == i) {
+					safeCheckPoint(player.getName(), player.getLocation());
+					player.sendMessage(prefix + "CheckPoint safed!");
 				}
 				
-				player.getInventory().addItem(new ItemStack(item, amount));
+			} catch(NumberFormatException e) {
+				player.sendMessage(prefix + "Cant safe CheckPoint! Contact Admin! He should look into the config.yml!");
 			}
 			
 		}
-	
+
 	}
-	
+
+	/**
+	 * 
+	 * @param player
+	 * @param x
+	 * @param z
+	 */
+	public static void addDiamondBlock(String player, int x, int z) {
+		diamond.get(player).put(x, z);
+	}
+
+	/**
+	 * 
+	 * @param player
+	 * @param x
+	 * @param z
+	 * @return
+	 */
+	public static boolean isWalkedDiamond(String player, int x, int z) {
+		if (diamond.get(player).containsKey(x) && diamond.get(player).containsValue(z))
+			return true;
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param player
+	 * @param x
+	 * @param z
+	 * @return
+	 */
+	public static boolean isWalkedOver(String player, int x, int z) {
+		if (Xblocks.get(player).containsValue(x) && Zblocks.get(player).containsValue(z))
+			return true;
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param player
+	 */
+	public static void helpMenu(Player player) {
+		player.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun by §c§lxapfeltortexp" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "]");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr join             " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Join TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr leave           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Leave TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr set spawn     " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Set the TempleRun Spawn");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr stop            " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Stop TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr start           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Start TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr kick [PLAYER] " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Kick Player out of TempleRun");
+	}
+
+	public static void safeCheckPoint(String player, Location loc) {
+		checkpoint.put(player, loc);
+	}
+
+	public static Location getCheckPoint(String player) {
+		return checkpoint.get(player);
+	}
+
+	public static boolean hasCheckPoint(String player) {
+		if (checkpoint.containsKey(player))
+			return true;
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param player
+	 */
+	public static void sendWinItems(Player player) {
+
+		if (main.item.isEmpty()) {
+			return;
+		}
+
+		for (String s : main.item) {
+
+			if (!s.contains(",")) {
+				continue;
+			} else {
+				String[] all = s.split(",");
+
+				int item = 0, amount = 0;
+
+				try {
+					item = Integer.parseInt(all[0]);
+					amount = Integer.parseInt(all[1]);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+
+				player.getInventory().addItem(new ItemStack(item, amount));
+			}
+
+		}
+
+	}
+
 }
