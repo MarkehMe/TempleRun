@@ -67,7 +67,11 @@ public class Util {
 		player.teleport(loc);
 	}
 
-	/* Spawn Location bekommen */
+	/**
+	 * 
+	 * @param plugin
+	 * @return
+	 */
 	public static Location getSpawnLocation(Plugin plugin) {
 
 		Location loc = null;
