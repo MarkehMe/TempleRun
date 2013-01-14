@@ -70,6 +70,8 @@ public class PlayerCommands implements CommandExecutor {
 				long time = System.currentTimeMillis();
 
 				Util.addPlayer(player.getName(), time, player);
+				Util.saveOldLoc(player);
+				
 				Util.teleport(player, Util.getSpawnLocation(main));
 				player.sendMessage(prefix + "You joined TempleRun! Good Luck!");
 				player.removePotionEffect(PotionEffectType.SPEED);
@@ -85,6 +87,7 @@ public class PlayerCommands implements CommandExecutor {
 				Location loc = Util.getOldLocation(player.getName());
 				Util.teleport(player, loc);
 				Util.removePlayer(player.getName());
+				Util.oldLoc.remove(player.getName());
 
 				if (Util.checkpoint.containsKey(player.getName()))
 					Util.checkpoint.remove(player.getName());

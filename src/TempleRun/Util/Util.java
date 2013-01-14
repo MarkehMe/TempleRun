@@ -43,7 +43,6 @@ public class Util {
 	/* Den Spieler zu TempleRun hinzufügen */
 	public static void removePlayer(String player) {
 		players.remove(player);
-		oldLoc.remove(player);
 		Xblocks.remove(player);
 		Zblocks.remove(player);
 		diamond.remove(player);
@@ -53,13 +52,16 @@ public class Util {
 	/* Den Spieler aus TempleRun herraus schmeisen */
 	public static void addPlayer(String player, long time, Player p) {
 		players.put(player, time);
-		oldLoc.put(player, p.getLocation());
 		Xblocks.put(player, new HashMap<Integer, Integer>());
 		Zblocks.put(player, new HashMap<Integer, Integer>());
 		Xblocks.get(player).put(0, 5);
 		Zblocks.get(player).put(0, 6);
 		diamond.put(player, new HashMap<Integer, Integer>());
 		coins.put(player, 0);
+	}
+	
+	public static void saveOldLoc(Player player) {
+		oldLoc.put(player.getName(), player.getLocation());
 	}
 
 	/* Spieler zu TempleRun teleportieren */
@@ -134,6 +136,7 @@ public class Util {
 
 				Location loc = getOldLocation(s);
 				teleport(p, loc);
+				oldLoc.remove(s);
 				removePlayer(s);
 
 				p.sendMessage(message);
@@ -180,6 +183,8 @@ public class Util {
 
 		Location loc = getOldLocation(player.getName());
 		teleport(player, loc);
+		
+		Util.oldLoc.remove(player.getName());
 
 		removePlayer(player.getName());
 	}

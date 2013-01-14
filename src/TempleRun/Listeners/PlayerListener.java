@@ -33,6 +33,8 @@ public class PlayerListener implements Listener {
 			Location loc = Util.getOldLocation(player.getName());
 			player.teleport(loc);
 			
+			Util.oldLoc.remove(player.getName());
+			
 			player.removePotionEffect(PotionEffectType.SPEED);
 			Util.removePlayer(player.getName());
 		}
