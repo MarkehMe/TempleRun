@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import TempleRun.TempleRun;
 import TempleRun.Util.Util;
@@ -31,12 +32,13 @@ public class PlayerListener implements Listener {
 
 			Location loc = Util.getOldLocation(player.getName());
 			player.teleport(loc);
-
+			
+			player.removePotionEffect(PotionEffectType.SPEED);
 			Util.removePlayer(player.getName());
 		}
 
 	}
-
+	
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 
@@ -69,6 +71,10 @@ public class PlayerListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (Util.isPlaying(player.getName())) {
+			
+			if(player.isOp()) {
+				return;
+			}
 
 			if (!event.getMessage().startsWith("/tr") && !event.getMessage().startsWith("/templerun")) {
 				player.sendMessage(Util.prefix + "You can just execute TempleRun Commands in TempleRun!");

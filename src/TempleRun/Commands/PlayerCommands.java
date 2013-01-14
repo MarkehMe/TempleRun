@@ -72,6 +72,7 @@ public class PlayerCommands implements CommandExecutor {
 				Util.addPlayer(player.getName(), time, player);
 				Util.teleport(player, Util.getSpawnLocation(main));
 				player.sendMessage(prefix + "You joined TempleRun! Good Luck!");
+				player.removePotionEffect(PotionEffectType.SPEED);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 
 			} else if (args[0].equalsIgnoreCase("leave")) {
