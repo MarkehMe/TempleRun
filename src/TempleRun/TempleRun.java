@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import TempleRun.Commands.PlayerCommands;
 import TempleRun.Listeners.PlayerListener;
+import TempleRun.Listeners.Coin.CoinListener;
 import TempleRun.Listeners.Move.PlayerMoveListener;
 import TempleRun.Listeners.Sign.PlayerSignListener;
 import TempleRun.Metrics.Metrics;
@@ -23,6 +24,7 @@ public class TempleRun extends JavaPlugin {
 	public PlayerMoveListener mlistener;
 	public PlayerSignListener slistener;
 	public PlayerListener plistener;
+	public CoinListener clistener;
 
 	public PlayerCommands cmd;
 	public int task;
@@ -45,10 +47,12 @@ public class TempleRun extends JavaPlugin {
 		slistener = new PlayerSignListener(this);
 		mlistener = new PlayerMoveListener(this);
 		plistener = new PlayerListener(this);
+		clistener = new CoinListener();
 
 		getServer().getPluginManager().registerEvents(slistener, this);
 		getServer().getPluginManager().registerEvents(mlistener, this);
 		getServer().getPluginManager().registerEvents(plistener, this);
+		getServer().getPluginManager().registerEvents(clistener, this);
 
 		cmd = new PlayerCommands(this);
 		getCommand("templerun").setExecutor(cmd);

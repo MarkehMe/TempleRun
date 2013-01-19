@@ -19,7 +19,7 @@ public class Util {
 	public Util(TempleRun main) {
 		Util.main = main;
 	}
-	
+
 	public static HashMap<String, Long> players = new HashMap<String, Long>();
 	public static HashMap<String, Location> oldLoc = new HashMap<String, Location>();
 	public static HashMap<String, HashMap<Integer, Integer>> diamond = new HashMap<String, HashMap<Integer, Integer>>();
@@ -59,7 +59,7 @@ public class Util {
 		diamond.put(player, new HashMap<Integer, Integer>());
 		coins.put(player, 0);
 	}
-	
+
 	public static void saveOldLoc(Player player) {
 		oldLoc.put(player.getName(), player.getLocation());
 	}
@@ -183,7 +183,7 @@ public class Util {
 
 		Location loc = getOldLocation(player.getName());
 		teleport(player, loc);
-		
+
 		Util.oldLoc.remove(player.getName());
 
 		removePlayer(player.getName());
@@ -207,27 +207,27 @@ public class Util {
 	public static void addCoin(Player player) {
 		int oldCoins = coins.get(player.getName());
 		coins.put(player.getName(), oldCoins + 1);
-		
+
 		if (main.safepoints.isEmpty()) {
 			player.sendMessage("is Empty");
 			return;
 		}
-		
-		for(String s : main.safepoints) {
-			
+
+		for (String s : main.safepoints) {
+
 			try {
-				
+
 				int i = Integer.parseInt(s);
-				
-				if(coins.get(player.getName()) == i) {
+
+				if (coins.get(player.getName()) == i) {
 					safeCheckPoint(player.getName(), player.getLocation());
 					player.sendMessage(prefix + "CheckPoint safed!");
 				}
-				
-			} catch(NumberFormatException e) {
+
+			} catch (NumberFormatException e) {
 				player.sendMessage(prefix + "Cant safe CheckPoint! Contact Admin! He should look into the config.yml!");
 			}
-			
+
 		}
 
 	}
@@ -280,6 +280,7 @@ public class Util {
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr stop            " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Stop TempleRun");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr start           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Start TempleRun");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr kick [PLAYER] " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Kick Player out of TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr give [AMOUNT] " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Give TempleRun Coins");
 	}
 
 	public static void safeCheckPoint(String player, Location loc) {
@@ -327,6 +328,22 @@ public class Util {
 
 		}
 
+	}
+
+	public static boolean isCoin(ItemStack is) {
+
+		if (!is.hasItemMeta()) {
+			return false;
+		}
+
+		if (is.getItemMeta().getDisplayName() == null) {
+			return false;
+		} else {
+			if (is.getItemMeta().getDisplayName().equalsIgnoreCase("§4§lTR-§c§lCoin") && is.getItemMeta().getLore().contains("§6Coin in TempleRun")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

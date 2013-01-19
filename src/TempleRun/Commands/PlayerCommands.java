@@ -1,11 +1,16 @@
 package TempleRun.Commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -71,7 +76,7 @@ public class PlayerCommands implements CommandExecutor {
 
 				Util.addPlayer(player.getName(), time, player);
 				Util.saveOldLoc(player);
-				
+
 				Util.teleport(player, Util.getSpawnLocation(main));
 				player.sendMessage(prefix + "You joined TempleRun! Good Luck!");
 				player.removePotionEffect(PotionEffectType.SPEED);
@@ -180,10 +185,40 @@ public class PlayerCommands implements CommandExecutor {
 					player.sendMessage(prefix + "Wrong Usage!");
 				}
 
+			} else if (args[0].equalsIgnoreCase("give")) {
+
+				if (!player.hasPermission("templerun.give")) {
+					player.sendMessage(noPerms);
+					return true;
+				}
+
+				if (args.length == 2) {
+					
+					try {
+						Integer.parseInt(args[1]);
+					} catch(NumberFormatException e) {
+						player.sendMessage(prefix + "Please use Numbers as Amount!");
+					}
+					
+					ArrayList<String> desc = new ArrayList<String>();
+					desc.add("§6Coin in TempleRun");
+					
+					ItemStack is = new ItemStack(Material.GOLD_NUGGET, Integer.parseInt(args[1]));
+					ItemMeta im = is.getItemMeta();
+					im.setDisplayName("§4§lTR-§c§lCoin");
+					im.setLore(desc);
+					
+					is.setItemMeta(im);
+					
+					player.getInventory().addItem(is);
+					player.sendMessage(prefix + ChatColor.GREEN + args[1] + ChatColor.GRAY + " Coins added to your inventory!");
+					
+				} else {
+					player.sendMessage(prefix + "Wrong Usage!");
+				}
 			} else {
 				Util.helpMenu(player);
 			}
-
 		}
 		return false;
 	}

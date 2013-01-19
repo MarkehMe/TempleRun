@@ -101,7 +101,7 @@ public class PlayerSignListener implements Listener {
 			player.removePotionEffect(PotionEffectType.SPEED);
 			
 			player.sendMessage(prefix + "You finished TempleRun!");
-			player.sendMessage(ChatColor.GRAY + "You Time: " + ChatColor.GREEN + ergebnis + " seconds!");
+			player.sendMessage(ChatColor.GRAY + "Your Time: " + ChatColor.GREEN + ergebnis + " seconds!");
 			player.sendMessage(ChatColor.GRAY + "Recieved Coins Amount: " + ChatColor.GREEN + coins);
 		}
 	}
