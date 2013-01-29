@@ -1,5 +1,6 @@
 package TempleRun.Listeners.Sign;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -67,7 +68,8 @@ public class PlayerSignListener implements Listener {
 
 		if (sign.getLine(0).equalsIgnoreCase(ChatColor.RED + "TempleRun") && sign.getLine(1).equalsIgnoreCase(ChatColor.BLUE + "Finish")) {
 
-			if (!player.hasPermission("templerun.sign.use")) {
+			/* Permissions */
+			if (!player.hasPermission("templerun.play")) {
 				player.sendMessage(prefix + "You dont have Permissions!");
 				return;
 			}
@@ -76,33 +78,97 @@ public class PlayerSignListener implements Listener {
 				player.sendMessage(prefix + "You dont play TempleRun at the Moment!");
 				return;
 			}
-			
+
 			Location loc = Util.getOldLocation(player.getName());
 
 			long time = Util.getTime(player.getName()) / 1000;
 			long now = System.currentTimeMillis() / 1000;
 			long ergebnis = now - time;
-			
+
 			int coins = Util.coins.get(player.getName());
 
 			Util.teleport(player, loc);
 			Util.removePlayer(player.getName());
-			
-			if(Util.checkpoint.containsKey(player.getName()))
+
+			if (Util.checkpoint.containsKey(player.getName()))
 				Util.checkpoint.remove(player.getName());
-			
+
 			Util.sendWinItems(player);
-			
-			if(main.getServer().getScheduler().isCurrentlyRunning(main.task)) {
+
+			if (main.getServer().getScheduler().isCurrentlyRunning(main.task)) {
 				main.getServer().getScheduler().cancelTask(main.task);
 			}
-			
+
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 			player.removePotionEffect(PotionEffectType.SPEED);
-			
+
 			player.sendMessage(prefix + "You finished TempleRun!");
 			player.sendMessage(ChatColor.GRAY + "Your Time: " + ChatColor.GREEN + ergebnis + " seconds!");
 			player.sendMessage(ChatColor.GRAY + "Recieved Coins Amount: " + ChatColor.GREEN + coins);
+
+			main.cload.load();
+
+			if (main.getConfigLoader().getString("Players." + player.getName()) == null) {
+				main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + coins);
+				main.saveConfigLoader();
+			} else {
+
+				String name = main.getConfigLoader().getString("Players." + player.getName());
+				String[] splitted = name.split(":");
+
+				try {
+
+					Integer.valueOf(splitted[0]);
+					Integer.valueOf(splitted[1]);
+
+				} catch (NumberFormatException e) {
+					return;
+				}
+
+				int oldcoins = Integer.valueOf(splitted[1]);
+				int oldtime = Integer.valueOf(splitted[0]);
+
+				if (oldcoins < coins && oldtime > ergebnis) {
+					main.getConfigLoader().set("Players." + player.getName(), oldtime + ":" + coins);
+					Bukkit.broadcastMessage("1");
+				} else if (oldcoins > coins && oldtime > ergebnis) {
+					main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + oldcoins);
+					Bukkit.broadcastMessage("2");
+				} else if (oldcoins >= coins && oldtime <= ergebnis) {
+					main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + oldcoins);
+					Bukkit.broadcastMessage("3");
+				} else {
+					main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + coins);
+					Bukkit.broadcastMessage("4");
+				}
+
+				main.cload.save();
+			}
+
+			if (main.getConfigLoader().getString("ServerBest.Time") == null) {
+				main.getConfigLoader().set("ServerBest.Time", ergebnis);
+				main.cload.save();
+			}
+			if (main.getConfigLoader().getString("ServerBest.Coins") == null) {
+				main.getConfigLoader().set("ServerBest.Coins", coins);
+				main.cload.save();
+			}
+
+			if ((main.getConfigLoader().getString("ServerBest.Coins") != null && main.getConfigLoader().getString("ServerBest.Time") != null)) {
+
+				long besttime = main.getConfigLoader().getLong("ServerBest.Time");
+				int bestcoins = main.getConfigLoader().getInt("ServerBest.Coins");
+
+				if (besttime > ergebnis) {
+					main.getConfigLoader().set("ServerBest.Time", ergebnis);
+				}
+				if (bestcoins < coins) {
+					main.getConfigLoader().set("ServerBest.Coins", coins);
+				}
+				main.cload.save();
+			}
+
+			main.cload.save();
 		}
 	}
 

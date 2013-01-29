@@ -3,24 +3,21 @@ package TempleRun;
 import java.io.IOException;
 import java.util.List;
 
+import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import TempleRun.Commands.PlayerCommands;
+import TempleRun.Config.ConfigLoader;
 import TempleRun.Listeners.PlayerListener;
 import TempleRun.Listeners.Coin.CoinListener;
 import TempleRun.Listeners.Move.PlayerMoveListener;
 import TempleRun.Listeners.Sign.PlayerSignListener;
 import TempleRun.Metrics.Metrics;
 import TempleRun.Util.Util;
-import TempleRun.Util.SaveEnum.MySQL;
-import TempleRun.Util.SaveEnum.SaveType;
 
 public class TempleRun extends JavaPlugin {
 
-	/* SaveType */
-	public SaveType savetype;
 	public Util util;
-	public MySQL mysql;
 	public PlayerMoveListener mlistener;
 	public PlayerSignListener slistener;
 	public PlayerListener plistener;
@@ -32,7 +29,7 @@ public class TempleRun extends JavaPlugin {
 	public List<String> item;
 	public List<String> safepoints;
 
-	// private String type;
+	public ConfigLoader cload;
 
 	@Override
 	public void onEnable() {
@@ -42,7 +39,6 @@ public class TempleRun extends JavaPlugin {
 
 		/* Objekt registrieren */
 		util = new Util(this);
-		mysql = new MySQL();
 
 		slistener = new PlayerSignListener(this);
 		mlistener = new PlayerMoveListener(this);
@@ -59,19 +55,15 @@ public class TempleRun extends JavaPlugin {
 
 		startMetrics();
 
-		/* type aus der Config ziehen */
-		// type = getConfig().getString("TempleRun.SaveType");
-
-		/*
-		 * Checken welche SaveMethode ich nutze if(SaveType.getSaveType(type) ==
-		 * SaveType.MYSQL) {
-		 * System.out.println("[TempleRun] You are using MySQL!"); } else
-		 * if(SaveType.getSaveType(type) == SaveType.CONFIG) {
-		 * System.out.println("[TempleRun] You are using the Bukkit Config!"); }
-		 * else { System.out.println("SaveType '" + type +
-		 * "' not found! Please use MYSQL or CONFIG!");
-		 * getServer().getPluginManager().disablePlugin(this); }
-		 */
+		try {
+			cload = new ConfigLoader(this);
+		} catch (Exception e) {
+			System.out.println("[TempleRun] Error while loading topplayers.yml! Plugin will disable!");
+			this.getServer().getPluginManager().disablePlugin(this);
+			return;
+		} finally {
+			System.out.println("[TempleRun] topplayers.yml successfully loaded.");
+		}
 	}
 
 	@Override
@@ -85,7 +77,7 @@ public class TempleRun extends JavaPlugin {
 	private void loadConfig() {
 
 		getConfig().options().copyDefaults(true);
-		
+
 		item = getConfig().getStringList("TempleRun.WinItem");
 		safepoints = getConfig().getStringList("TempleRun.SafeCheckPointAt");
 
@@ -102,6 +94,15 @@ public class TempleRun extends JavaPlugin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public Configuration getConfigLoader() {
+		cload.load();
+		return cload.getConfig();
+	}
+
+	public void saveConfigLoader() {
+		cload.save();
 	}
 
 }

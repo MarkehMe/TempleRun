@@ -43,12 +43,6 @@ public class PlayerCommands implements CommandExecutor {
 			/* Player Objekt zuordnen */
 			final Player player = (Player) sender;
 
-			/* Permissions */
-			if (!player.hasPermission("templerun.execute")) {
-				player.sendMessage(noPerms);
-				return true;
-			}
-
 			/* Argumente checken */
 			if (args.length == 0) {
 
@@ -56,6 +50,12 @@ public class PlayerCommands implements CommandExecutor {
 
 				return true;
 			} else if (args[0].equalsIgnoreCase("join")) {
+
+				/* Permissions */
+				if (!player.hasPermission("templerun.play")) {
+					player.sendMessage(noPerms);
+					return true;
+				}
 
 				if (!Util.isAllSet(main)) {
 					player.sendMessage(prefix + "Please set all Spawns!");
@@ -82,7 +82,26 @@ public class PlayerCommands implements CommandExecutor {
 				player.removePotionEffect(PotionEffectType.SPEED);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 
+				if (player.hasPermission("templerun.pickup")) {
+					player.sendMessage(ChatColor.DARK_RED + "Attention: " + ChatColor.GRAY + "You have the Permission: templerun.pickup.");
+					player.sendMessage(ChatColor.GRAY + "That means, you will pickup the Coins!");
+				}
+				
+				main.cload.load();
+				
+				if (main.getConfigLoader().getString("Players." + player.getName()) == null) {
+					main.getConfigLoader().set("Players." + player.getName(), "0:0");
+					main.cload.save();
+					return true;
+				}
+
 			} else if (args[0].equalsIgnoreCase("leave")) {
+
+				/* Permissions */
+				if (!player.hasPermission("templerun.play")) {
+					player.sendMessage(noPerms);
+					return true;
+				}
 
 				if (!Util.isPlaying(player.getName())) {
 					player.sendMessage(prefix + "You are not in TempleRun!");
@@ -193,31 +212,58 @@ public class PlayerCommands implements CommandExecutor {
 				}
 
 				if (args.length == 2) {
-					
+
 					try {
 						Integer.parseInt(args[1]);
-					} catch(NumberFormatException e) {
+					} catch (NumberFormatException e) {
 						player.sendMessage(prefix + "Please use Numbers as Amount!");
 					}
-					
+
 					ArrayList<String> desc = new ArrayList<String>();
 					desc.add("§6Coin in TempleRun");
-					
+
 					ItemStack is = new ItemStack(Material.GOLD_NUGGET, Integer.parseInt(args[1]));
 					ItemMeta im = is.getItemMeta();
 					im.setDisplayName("§4§lTR-§c§lCoin");
 					im.setLore(desc);
-					
+
 					is.setItemMeta(im);
-					
+
 					player.getInventory().addItem(is);
 					player.sendMessage(prefix + ChatColor.GREEN + args[1] + ChatColor.GRAY + " Coins added to your inventory!");
-					
+
 				} else {
 					player.sendMessage(prefix + "Wrong Usage!");
 				}
-			} else {
-				Util.helpMenu(player);
+			} else if (args[0].equalsIgnoreCase("info")) {
+
+				if (args.length == 1) {
+
+					if (main.getConfigLoader().getString("Players." + player.getName()) == null) {
+						player.sendMessage(Util.prefix + "You never played or won TempleRun before!");
+						return true;
+					}
+
+					try {
+						
+						String playerdata = main.getConfigLoader().getString("Players." + player.getName());
+						String[] splitted = playerdata.split(":");
+						
+						String time = splitted[0];
+						String besttime = main.getConfigLoader().getString("ServerBest.Time");
+						String coins = splitted[1];
+						String bestcoins = main.getConfigLoader().getString("ServerBest.Coins");
+						
+						player.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun §c§lInfo" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "]");
+						player.sendMessage(ChatColor.GRAY + "Your best time: §c§l" + time + " sec");
+						player.sendMessage(ChatColor.GRAY + "Your best coins amount: §c§l" + coins);
+						player.sendMessage(ChatColor.GRAY + "Server best time: §c§l" + besttime + " sec");
+						player.sendMessage(ChatColor.GRAY + "Server best coins: §c§l" + bestcoins);
+					} catch (NullPointerException e) {
+						player.sendMessage(Util.prefix + "There was an NullPointerException!");
+					}
+
+				}
 			}
 		}
 		return false;
