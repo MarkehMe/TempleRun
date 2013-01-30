@@ -256,11 +256,12 @@ public class Util {
 	}
 
 	/**
+	 * Check if an Player already walked over an Block!
 	 * 
 	 * @param player
 	 * @param x
 	 * @param z
-	 * @return
+	 * @return true false
 	 */
 	public static boolean isWalkedOver(String player, int x, int z) {
 		if (Xblocks.get(player).containsValue(x) && Zblocks.get(player).containsValue(z))
@@ -281,6 +282,8 @@ public class Util {
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr start           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Start TempleRun");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr kick [PLAYER] " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Kick Player out of TempleRun");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr give [AMOUNT] " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Give TempleRun Coins");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr info             " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Show Player Information");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr topten           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Show TopTen Players");
 	}
 
 	public static void safeCheckPoint(String player, Location loc) {
