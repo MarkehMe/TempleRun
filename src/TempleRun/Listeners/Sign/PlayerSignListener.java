@@ -1,6 +1,5 @@
 package TempleRun.Listeners.Sign;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -130,16 +129,12 @@ public class PlayerSignListener implements Listener {
 
 				if (oldcoins < coins && oldtime > ergebnis) {
 					main.getConfigLoader().set("Players." + player.getName(), oldtime + ":" + coins);
-					Bukkit.broadcastMessage("1");
 				} else if (oldcoins > coins && oldtime > ergebnis) {
 					main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + oldcoins);
-					Bukkit.broadcastMessage("2");
 				} else if (oldcoins >= coins && oldtime <= ergebnis) {
 					main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + oldcoins);
-					Bukkit.broadcastMessage("3");
 				} else {
 					main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + coins);
-					Bukkit.broadcastMessage("4");
 				}
 
 				main.cload.save();

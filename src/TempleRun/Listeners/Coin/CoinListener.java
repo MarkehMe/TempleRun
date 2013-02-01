@@ -10,9 +10,16 @@ import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
+import TempleRun.TempleRun;
 import TempleRun.Util.Util;
 
 public class CoinListener implements Listener {
+	
+	private TempleRun main;
+	
+	public CoinListener(TempleRun main) {
+		this.main = main;
+	}
 
 	@EventHandler
 	public void onItemPickup(PlayerPickupItemEvent event) {
@@ -24,7 +31,7 @@ public class CoinListener implements Listener {
 
 		if (Util.isCoin(event.getItem().getItemStack())) {
 
-			if (player.hasPermission("templerun.pickup")) {
+			if (player.hasPermission("templerun.pickup") && main.pickup) {
 				return;
 			}
 			

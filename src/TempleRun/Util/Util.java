@@ -275,15 +275,16 @@ public class Util {
 	 */
 	public static void helpMenu(Player player) {
 		player.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun by §c§lxapfeltortexp" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "]");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr join             " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Join TempleRun");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr leave           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Leave TempleRun");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr set spawn     " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Set the TempleRun Spawn");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr stop            " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Stop TempleRun");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr start           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Start TempleRun");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr kick [PLAYER] " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Kick Player out of TempleRun");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr give [AMOUNT] " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Give TempleRun Coins");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr info             " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Show Player Information");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr join              " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Join TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr leave            " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Leave TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr set spawn      " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Set the TempleRun Spawn");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr stop             " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Stop TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr start            " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Start TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr kick [PLAYER]  " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Kick Player out of TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr give [AMOUNT]  " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Give TempleRun Coins");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr info              " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Show Player Information");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr topten           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Show TopTen Players");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr pickup           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "En-/Disable Coin Pickup");
 	}
 
 	public static void safeCheckPoint(String player, Location loc) {

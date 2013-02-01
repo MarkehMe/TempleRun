@@ -13,6 +13,7 @@ import TempleRun.Listeners.Coin.CoinListener;
 import TempleRun.Listeners.Move.PlayerMoveListener;
 import TempleRun.Listeners.Sign.PlayerSignListener;
 import TempleRun.Metrics.Metrics;
+import TempleRun.Update.Updater;
 import TempleRun.Util.Util;
 
 public class TempleRun extends JavaPlugin {
@@ -28,6 +29,11 @@ public class TempleRun extends JavaPlugin {
 
 	public List<String> item;
 	public List<String> safepoints;
+	
+	public boolean pickup = false;
+	
+	public static boolean update = false;
+	public static long size = 0;
 
 	public ConfigLoader cload;
 
@@ -43,7 +49,7 @@ public class TempleRun extends JavaPlugin {
 		slistener = new PlayerSignListener(this);
 		mlistener = new PlayerMoveListener(this);
 		plistener = new PlayerListener(this);
-		clistener = new CoinListener();
+		clistener = new CoinListener(this);
 
 		getServer().getPluginManager().registerEvents(slistener, this);
 		getServer().getPluginManager().registerEvents(mlistener, this);
@@ -54,6 +60,10 @@ public class TempleRun extends JavaPlugin {
 		getCommand("templerun").setExecutor(cmd);
 
 		startMetrics();
+		
+		Updater updater = new Updater(this, "templerun", this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
+		update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
+		size = updater.getFileSize();
 
 		try {
 			cload = new ConfigLoader(this);

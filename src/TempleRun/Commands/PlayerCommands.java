@@ -90,7 +90,7 @@ public class PlayerCommands implements CommandExecutor {
 				player.removePotionEffect(PotionEffectType.SPEED);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 
-				if (player.hasPermission("templerun.pickup")) {
+				if (player.hasPermission("templerun.pickup") && main.pickup) {
 					player.sendMessage(ChatColor.DARK_RED + "Attention: " + ChatColor.GRAY + "You have the Permission: templerun.pickup.");
 					player.sendMessage(ChatColor.GRAY + "That means, you will pickup the Coins!");
 				}
@@ -124,7 +124,7 @@ public class PlayerCommands implements CommandExecutor {
 				if (Util.checkpoint.containsKey(player.getName()))
 					Util.checkpoint.remove(player.getName());
 
-				player.sendMessage(prefix + "You leaved TempleRun and got teleported back to your old Location!");
+				player.sendMessage(prefix + "You have left TempleRun and teleported to your last location!");
 				player.removePotionEffect(PotionEffectType.SPEED);
 
 			} else if (args[0].equalsIgnoreCase("set")) {
@@ -271,6 +271,8 @@ public class PlayerCommands implements CommandExecutor {
 						player.sendMessage(Util.prefix + "There was an NullPointerException!");
 					}
 
+				} else {
+					player.sendMessage(Util.prefix + "Wrong Usage!");
 				}
 			} else if (args[0].equalsIgnoreCase("topten")) {
 
@@ -289,6 +291,7 @@ public class PlayerCommands implements CommandExecutor {
 				topten = sortMap(topten);
 
 				try {
+					// Get the TopTen Players
 					String top1Player = (String) topten.keySet().toArray()[0];
 					Integer top1Value = topten.get(top1Player);
 					player.sendMessage("§41§7. §c§o" + top1Player + "  §7||  §c§o" + top1Value);
@@ -333,11 +336,40 @@ public class PlayerCommands implements CommandExecutor {
 				}
 
 				topten.clear();
+			} else if(args[0].equalsIgnoreCase("pickup")) {
+				
+				if(!player.hasPermission("templerun.pickup")) {
+					player.sendMessage(Util.prefix + "You dont have Permissions.");
+					return true;
+				}
+				
+				if(args.length != 1) {
+					player.sendMessage(Util.prefix + "Wrong Usage!");
+					return true;
+				}
+				
+				if(main.pickup) {
+					player.sendMessage(Util.prefix + "Coin Pickup disabled!");
+					main.pickup = false;
+				} else {
+					main.pickup = true;
+					player.sendMessage(Util.prefix + "Coin Pickup enabled for the Players with the Permissions: §ctemplerun.pickup");
+				}
+				
+				
+			} else {
+				player.sendMessage(Util.prefix + "Argument not found!");
 			}
 		}
 		return false;
 	}
 
+	/**
+	 * Convert my sortedList into an Big to Low sorted List
+	 * 
+	 * @param map
+	 * @return
+	 */
 	private LinkedHashMap<String, Integer> sortMap(Map<String, Integer> map) {
 		SortedSet<Map.Entry<String, Integer>> sortedEntries = new TreeSet<Map.Entry<String, Integer>>(new Comparator<Map.Entry<String, Integer>>() {
 			@Override

@@ -1,14 +1,19 @@
 package TempleRun.Listeners;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffectType;
 
@@ -24,6 +29,16 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+
+		Player player = event.getPlayer();
+
+		if (player.isOp() && TempleRun.update) {
+			player.sendMessage(Util.prefix + "There is an new Update available! Size: §c(" + TempleRun.size + " bytes)");
+		}
+	}
+
+	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 
 		Player player = event.getPlayer();
@@ -32,15 +47,15 @@ public class PlayerListener implements Listener {
 
 			Location loc = Util.getOldLocation(player.getName());
 			player.teleport(loc);
-			
+
 			Util.oldLoc.remove(player.getName());
-			
+
 			player.removePotionEffect(PotionEffectType.SPEED);
 			Util.removePlayer(player.getName());
 		}
 
 	}
-	
+
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 
@@ -73,8 +88,8 @@ public class PlayerListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (Util.isPlaying(player.getName())) {
-			
-			if(player.isOp()) {
+
+			if (player.isOp()) {
 				return;
 			}
 
@@ -86,18 +101,18 @@ public class PlayerListener implements Listener {
 		}
 
 	}
-	
+
 	@EventHandler
 	public void onPlayerDamage(EntityDamageEvent event) {
-		
-		if(event.getEntity() instanceof Player) {
-			
+
+		if (event.getEntity() instanceof Player) {
+
 			Player player = (Player) event.getEntity();
-			
-			if(Util.isPlaying(player.getName())) {
+
+			if (Util.isPlaying(player.getName())) {
 				event.setCancelled(true);
 			}
-			
+
 		}
 	}
 
@@ -108,14 +123,44 @@ public class PlayerListener implements Listener {
 			return;
 
 		if (event.getEntity() instanceof Player) {
-			
+
 			Player player = (Player) event.getEntity();
-			
+
 			if (Util.isPlaying(player.getName())) {
 				event.setCancelled(true);
 			}
 		}
 
+	}
+
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent event) {
+
+		if (event.isCancelled())
+			return;
+
+		Player player = (Player) event.getWhoClicked();
+
+		if (Util.isPlaying(player.getName())) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void onEnderPearl(PlayerInteractEvent event) {
+
+		Player player = event.getPlayer();
+
+		if (event.isCancelled())
+			return;
+
+		if (event.getAction() == Action.RIGHT_CLICK_AIR) {
+
+			if (Util.isPlaying(player.getName()) && player.getItemInHand().getType() == Material.ENDER_PEARL) {
+				event.setCancelled(true);
+			}
+
+		}
 	}
 
 }

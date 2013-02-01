@@ -89,12 +89,12 @@ public class PlayerMoveListener implements Listener {
 					Location loc = Util.getCheckPoint(player.getName());
 					player.teleport(loc);
 					Util.checkpoint.remove(player.getName());
-					player.sendMessage(Util.prefix + "You felt out of TempleRun. Try again at your CheckPoint!!");
+					player.sendMessage(Util.prefix + "You dropped out of TempleRun. Try again at your CheckPoint!!");
 					return;
 				}
 				
 				Util.teleport(player, Util.getSpawnLocation(main));
-				player.sendMessage(Util.prefix + "You felt out of TempleRun. Try again!");
+				player.sendMessage(Util.prefix + "You dropped out of TempleRun. Try again!");
 			}
 		}
 
