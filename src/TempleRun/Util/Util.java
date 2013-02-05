@@ -1,6 +1,7 @@
 package TempleRun.Util;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -24,6 +25,7 @@ public class Util {
 	public static HashMap<String, Location> oldLoc = new HashMap<String, Location>();
 	public static HashMap<String, HashMap<Integer, Integer>> diamond = new HashMap<String, HashMap<Integer, Integer>>();
 	public static HashMap<String, Integer> coins = new HashMap<String, Integer>();
+	public static LinkedHashMap<String, String> arenaname = new LinkedHashMap<String, String>();
 
 	public static HashMap<String, Location> checkpoint = new HashMap<String, Location>();
 
@@ -50,7 +52,7 @@ public class Util {
 	}
 
 	/* Den Spieler aus TempleRun herraus schmeisen */
-	public static void addPlayer(String player, long time, Player p) {
+	public static void addPlayer(String player, long time, Player p, String args) {
 		players.put(player, time);
 		Xblocks.put(player, new HashMap<Integer, Integer>());
 		Zblocks.put(player, new HashMap<Integer, Integer>());
@@ -58,6 +60,7 @@ public class Util {
 		Zblocks.get(player).put(0, 6);
 		diamond.put(player, new HashMap<Integer, Integer>());
 		coins.put(player, 0);
+		arenaname.put(player, args);
 	}
 
 	public static void saveOldLoc(Player player) {
@@ -74,24 +77,36 @@ public class Util {
 	 * @param plugin
 	 * @return
 	 */
-	public static Location getSpawnLocation(Plugin plugin) {
+	public static Location getSpawnLocation(Plugin plugin, String name) {
 
 		Location loc = null;
 
-		if (isAllSet(main)) {
+		if (isAllSet(main, name)) {
 
-			String world = plugin.getConfig().getString("TempleRun.Spawn.World");
-			double x = plugin.getConfig().getDouble("TempleRun.Spawn.X");
-			double y = plugin.getConfig().getDouble("TempleRun.Spawn.Y");
-			double z = plugin.getConfig().getDouble("TempleRun.Spawn.Z");
-			double yaw = plugin.getConfig().getDouble("TempleRun.Spawn.Yaw");
-			double pitch = plugin.getConfig().getDouble("TempleRun.Spawn.Pitch");
+			String world = plugin.getConfig().getString("TempleRun.Spawns." + name + ".World");
+			double x = plugin.getConfig().getDouble("TempleRun.Spawns." + name + ".X");
+			double y = plugin.getConfig().getDouble("TempleRun.Spawns." + name + ".Y");
+			double z = plugin.getConfig().getDouble("TempleRun.Spawns." + name + ".Z");
+			double yaw = plugin.getConfig().getDouble("TempleRun.Spawns." + name + ".Yaw");
+			double pitch = plugin.getConfig().getDouble("TempleRun.Spawns." + name + ".Pitch");
 
 			loc = new Location(plugin.getServer().getWorld(world), x, y, z, (float) yaw, (float) pitch);
 			return loc;
 		}
 
 		return loc;
+	}
+	
+	/**
+	 * Delete an available Arena!
+	 * 
+	 * @param name
+	 */
+	public static void deleteArena(String name) {
+		
+		main.getConfig().set("TempleRun.Spawns." + name, null);
+		main.saveConfig();
+		
 	}
 
 	/* Die Zeit von dem Spieler bekommen */
@@ -145,11 +160,12 @@ public class Util {
 		players.clear();
 		oldLoc.clear();
 		checkpoint.clear();
+		arenaname.clear();
 
 	}
 
 	/* Set TempleRun Spawn */
-	public static void setSpawnLocation(Plugin plugin, Player player) {
+	public static void setSpawnLocation(Plugin plugin, Player player, String name) {
 
 		String world = player.getLocation().getWorld().getName();
 		double x = player.getLocation().getX();
@@ -158,12 +174,12 @@ public class Util {
 		float yaw = player.getLocation().getYaw();
 		float pitch = player.getLocation().getPitch();
 
-		plugin.getConfig().set("TempleRun.Spawn.World", world);
-		plugin.getConfig().set("TempleRun.Spawn.X", x);
-		plugin.getConfig().set("TempleRun.Spawn.Y", y);
-		plugin.getConfig().set("TempleRun.Spawn.Z", z);
-		plugin.getConfig().set("TempleRun.Spawn.Yaw", yaw);
-		plugin.getConfig().set("TempleRun.Spawn.Pitch", pitch);
+		plugin.getConfig().set("TempleRun.Spawns." + name + ".World", world);
+		plugin.getConfig().set("TempleRun.Spawns." + name + ".X", x);
+		plugin.getConfig().set("TempleRun.Spawns." + name + ".Y", y);
+		plugin.getConfig().set("TempleRun.Spawns." + name + ".Z", z);
+		plugin.getConfig().set("TempleRun.Spawns." + name + ".Yaw", yaw);
+		plugin.getConfig().set("TempleRun.Spawns." + name + ".Pitch", pitch);
 		plugin.saveConfig();
 	}
 
@@ -172,8 +188,8 @@ public class Util {
 	}
 
 	/* Sind alle Location gesetzt ? */
-	public static boolean isAllSet(Plugin plugin) {
-		if (plugin.getConfig().getString("TempleRun.Spawn.World") != null)
+	public static boolean isAllSet(Plugin plugin, String name) {
+		if (plugin.getConfig().getString("TempleRun.Spawns." + name + ".World") != null)
 			return true;
 		return false;
 	}
@@ -209,7 +225,6 @@ public class Util {
 		coins.put(player.getName(), oldCoins + 1);
 
 		if (main.safepoints.isEmpty()) {
-			player.sendMessage("is Empty");
 			return;
 		}
 
@@ -221,7 +236,6 @@ public class Util {
 
 				if (coins.get(player.getName()) == i) {
 					safeCheckPoint(player.getName(), player.getLocation());
-					player.sendMessage(prefix + "CheckPoint safed!");
 				}
 
 			} catch (NumberFormatException e) {
@@ -275,9 +289,9 @@ public class Util {
 	 */
 	public static void helpMenu(Player player) {
 		player.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun by §c§lxapfeltortexp" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "]");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr join              " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Join TempleRun");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr join [NAME]     " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Join TempleRun");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr leave            " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Leave TempleRun");
-		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr set spawn      " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Set the TempleRun Spawn");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr set [NAME]      " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Set the TempleRun Spawn");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr stop             " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Stop TempleRun");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr start            " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Start TempleRun");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr kick [PLAYER]  " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Kick Player out of TempleRun");
@@ -285,6 +299,7 @@ public class Util {
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr info              " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Show Player Information");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr topten           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Show TopTen Players");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr pickup           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "En-/Disable Coin Pickup");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr delete [NAME]  " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Delete Arena");
 	}
 
 	public static void safeCheckPoint(String player, Location loc) {
@@ -348,6 +363,10 @@ public class Util {
 			}
 		}
 		return false;
+	}
+	
+	public static String getArenaName(String name) {
+		return arenaname.get(name);
 	}
 
 }

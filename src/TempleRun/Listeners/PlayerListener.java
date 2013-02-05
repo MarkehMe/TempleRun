@@ -13,7 +13,6 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffectType;
 
@@ -26,16 +25,6 @@ public class PlayerListener implements Listener {
 
 	public PlayerListener(TempleRun main) {
 		this.main = main;
-	}
-
-	@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent event) {
-
-		Player player = event.getPlayer();
-
-		if (player.isOp() && TempleRun.update) {
-			player.sendMessage(Util.prefix + "There is an new Update available! Size: §c(" + TempleRun.size + " bytes)");
-		}
 	}
 
 	@EventHandler

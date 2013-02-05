@@ -65,8 +65,13 @@ public class PlayerCommands implements CommandExecutor {
 					return true;
 				}
 
-				if (!Util.isAllSet(main)) {
-					player.sendMessage(prefix + "Please set all Spawns!");
+				if (args.length != 2) {
+					player.sendMessage(prefix + "Wrong usage: /tr join <NAME>");
+					return true;
+				}
+
+				if (!Util.isAllSet(main, args[1])) {
+					player.sendMessage(prefix + "TempleRun Arena not found -> §c" + args[1] + "§7!");
 					return true;
 				}
 
@@ -82,16 +87,16 @@ public class PlayerCommands implements CommandExecutor {
 
 				long time = System.currentTimeMillis();
 
-				Util.addPlayer(player.getName(), time, player);
+				Util.addPlayer(player.getName(), time, player, args[1]);
 				Util.saveOldLoc(player);
 
-				Util.teleport(player, Util.getSpawnLocation(main));
+				Util.teleport(player, Util.getSpawnLocation(main, args[1]));
 				player.sendMessage(prefix + "You joined TempleRun! Good Luck!");
 				player.removePotionEffect(PotionEffectType.SPEED);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 
 				if (player.hasPermission("templerun.pickup") && main.pickup) {
-					player.sendMessage(ChatColor.DARK_RED + "Attention: " + ChatColor.GRAY + "You have the Permission: templerun.pickup.");
+					player.sendMessage(ChatColor.DARK_RED + "Attention: " + ChatColor.GRAY + "You used the Command /tr pickup!");
 					player.sendMessage(ChatColor.GRAY + "That means, you will pickup the Coins!");
 				}
 
@@ -124,6 +129,8 @@ public class PlayerCommands implements CommandExecutor {
 				if (Util.checkpoint.containsKey(player.getName()))
 					Util.checkpoint.remove(player.getName());
 
+				Util.arenaname.remove(player.getName());
+
 				player.sendMessage(prefix + "You have left TempleRun and teleported to your last location!");
 				player.removePotionEffect(PotionEffectType.SPEED);
 
@@ -136,17 +143,11 @@ public class PlayerCommands implements CommandExecutor {
 
 				if (args.length == 2) {
 
-					if (args[1].equalsIgnoreCase("spawn")) {
-
-						Util.setSpawnLocation(main, player);
-						player.sendMessage(prefix + "TempleRun SpawnLocation set!");
-
-					} else {
-						player.sendMessage(prefix + "Argument not found!");
-					}
+					Util.setSpawnLocation(main, player, args[1]);
+					player.sendMessage(prefix + "TempleRun SpawnLocation set!");
 
 				} else {
-					player.sendMessage(prefix + "Wrong Usage!");
+					player.sendMessage(prefix + "Wrong Usage! /tr set <NAME>");
 				}
 			} else if (args[0].equalsIgnoreCase("stop")) {
 
@@ -336,29 +337,46 @@ public class PlayerCommands implements CommandExecutor {
 				}
 
 				topten.clear();
-			} else if(args[0].equalsIgnoreCase("pickup")) {
-				
-				if(!player.hasPermission("templerun.pickup")) {
+			} else if (args[0].equalsIgnoreCase("pickup")) {
+
+				if (!player.hasPermission("templerun.pickup")) {
 					player.sendMessage(Util.prefix + "You dont have Permissions.");
 					return true;
 				}
-				
-				if(args.length != 1) {
+
+				if (args.length != 1) {
 					player.sendMessage(Util.prefix + "Wrong Usage!");
 					return true;
 				}
-				
-				if(main.pickup) {
+
+				if (main.pickup) {
 					player.sendMessage(Util.prefix + "Coin Pickup disabled!");
 					main.pickup = false;
 				} else {
 					main.pickup = true;
 					player.sendMessage(Util.prefix + "Coin Pickup enabled for the Players with the Permissions: §ctemplerun.pickup");
 				}
+
+			} else if (args[0].equalsIgnoreCase("delete")) {
+
+				if (!player.hasPermission("templerun.delete")) {
+					player.sendMessage(Util.prefix + "You dont have Permissions.");
+					return true;
+				}
+
+				if (args.length != 2) {
+					player.sendMessage(Util.prefix + "Wrong Usage!");
+					return true;
+				}
+
+				if (!Util.isAllSet(main, args[1])) {
+					player.sendMessage(prefix + "TempleRun Arena not found -> §c" + args[1] + "§7!");
+					return true;
+				}
 				
-				
-			} else {
-				player.sendMessage(Util.prefix + "Argument not found!");
+				Util.deleteArena(args[1]);
+				player.sendMessage(prefix + "Arena deleted!");
+
 			}
 		}
 		return false;

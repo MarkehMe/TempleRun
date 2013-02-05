@@ -104,7 +104,9 @@ public class PlayerSignListener implements Listener {
 			player.sendMessage(prefix + "You finished TempleRun!");
 			player.sendMessage(ChatColor.GRAY + "Your Time: " + ChatColor.GREEN + ergebnis + " seconds!");
 			player.sendMessage(ChatColor.GRAY + "Recieved Coins Amount: " + ChatColor.GREEN + coins);
-
+			
+			Util.arenaname.remove(player.getName());
+			
 			main.cload.load();
 
 			if (main.getConfigLoader().getString("Players." + player.getName()) == null) {

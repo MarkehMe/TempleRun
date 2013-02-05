@@ -81,8 +81,10 @@ public class PlayerMoveListener implements Listener {
 				player.removePotionEffect(PotionEffectType.SPEED);
 
 				long time = System.currentTimeMillis();
-
-				Util.addPlayer(player.getName(), time, player);
+				
+				String arenaname = Util.getArenaName(player.getName());
+				
+				Util.addPlayer(player.getName(), time, player, arenaname);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 				
 				if(Util.hasCheckPoint(player.getName())) {
@@ -93,7 +95,7 @@ public class PlayerMoveListener implements Listener {
 					return;
 				}
 				
-				Util.teleport(player, Util.getSpawnLocation(main));
+				Util.teleport(player, Util.getSpawnLocation(main, arenaname));
 				player.sendMessage(Util.prefix + "You dropped out of TempleRun. Try again!");
 			}
 		}

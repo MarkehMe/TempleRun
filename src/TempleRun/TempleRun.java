@@ -10,10 +10,10 @@ import TempleRun.Commands.PlayerCommands;
 import TempleRun.Config.ConfigLoader;
 import TempleRun.Listeners.PlayerListener;
 import TempleRun.Listeners.Coin.CoinListener;
+import TempleRun.Listeners.Features.SplashListener;
 import TempleRun.Listeners.Move.PlayerMoveListener;
 import TempleRun.Listeners.Sign.PlayerSignListener;
 import TempleRun.Metrics.Metrics;
-import TempleRun.Update.Updater;
 import TempleRun.Util.Util;
 
 public class TempleRun extends JavaPlugin {
@@ -23,19 +23,21 @@ public class TempleRun extends JavaPlugin {
 	public PlayerSignListener slistener;
 	public PlayerListener plistener;
 	public CoinListener clistener;
+	public SplashListener spllistener;
 
 	public PlayerCommands cmd;
 	public int task;
 
 	public List<String> item;
 	public List<String> safepoints;
-	
+
 	public boolean pickup = false;
-	
+
 	public static boolean update = false;
 	public static long size = 0;
 
 	public ConfigLoader cload;
+	
 
 	@Override
 	public void onEnable() {
@@ -50,20 +52,18 @@ public class TempleRun extends JavaPlugin {
 		mlistener = new PlayerMoveListener(this);
 		plistener = new PlayerListener(this);
 		clistener = new CoinListener(this);
+		spllistener = new SplashListener();
 
 		getServer().getPluginManager().registerEvents(slistener, this);
 		getServer().getPluginManager().registerEvents(mlistener, this);
 		getServer().getPluginManager().registerEvents(plistener, this);
 		getServer().getPluginManager().registerEvents(clistener, this);
+		getServer().getPluginManager().registerEvents(spllistener, this);
 
 		cmd = new PlayerCommands(this);
 		getCommand("templerun").setExecutor(cmd);
 
 		startMetrics();
-		
-		Updater updater = new Updater(this, "templerun", this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false);
-		update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
-		size = updater.getFileSize();
 
 		try {
 			cload = new ConfigLoader(this);
@@ -94,6 +94,9 @@ public class TempleRun extends JavaPlugin {
 		saveConfig();
 	}
 
+	/**
+	 * Start the Metrics.class
+	 */
 	private void startMetrics() {
 
 		try {
@@ -106,6 +109,11 @@ public class TempleRun extends JavaPlugin {
 		}
 	}
 
+	/**
+	 * TopTen Configuration Loader!
+	 * 
+	 * @return
+	 */
 	public Configuration getConfigLoader() {
 		cload.load();
 		return cload.getConfig();
