@@ -2,6 +2,7 @@ package TempleRun.Util;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -103,8 +104,10 @@ public class Util {
 	 * @param name
 	 */
 	public static void deleteArena(String name) {
-		
+		List<String> arenas = main.getConfig().getStringList("TempleRun.Arenas");
 		main.getConfig().set("TempleRun.Spawns." + name, null);
+		arenas.remove(name);
+		main.getConfig().set("TempleRun.Arenas", arenas);
 		main.saveConfig();
 		
 	}
@@ -166,7 +169,7 @@ public class Util {
 
 	/* Set TempleRun Spawn */
 	public static void setSpawnLocation(Plugin plugin, Player player, String name) {
-
+		List<String> arenas = main.getConfig().getStringList("TempleRun.Arenas");
 		String world = player.getLocation().getWorld().getName();
 		double x = player.getLocation().getX();
 		double y = player.getLocation().getY() + 1;
@@ -180,7 +183,20 @@ public class Util {
 		plugin.getConfig().set("TempleRun.Spawns." + name + ".Z", z);
 		plugin.getConfig().set("TempleRun.Spawns." + name + ".Yaw", yaw);
 		plugin.getConfig().set("TempleRun.Spawns." + name + ".Pitch", pitch);
+		
+		if(arenas.contains(name)) {
+			plugin.saveConfig();
+			return;
+		} else {
+			arenas.add(name);
+			main.getConfig().set("TempleRun.Arenas", arenas);
+		}
 		plugin.saveConfig();
+	}
+	
+	public static List<String> getArenas() {
+		List<String> arenas = main.getConfig().getStringList("TempleRun.Arenas");
+		return arenas;
 	}
 
 	public static Location getOldLocation(String player) {

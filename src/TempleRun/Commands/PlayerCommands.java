@@ -373,10 +373,29 @@ public class PlayerCommands implements CommandExecutor {
 					player.sendMessage(prefix + "TempleRun Arena not found -> §c" + args[1] + "§7!");
 					return true;
 				}
-				
+
 				Util.deleteArena(args[1]);
 				player.sendMessage(prefix + "Arena deleted!");
 
+			} else if (args[0].equalsIgnoreCase("arenas")) {
+
+				if (main.getConfig().getString("TempleRun.Arenas") == null || main.getConfig().getStringList("TempleRun.Arenas").isEmpty()) {
+					player.sendMessage(Util.prefix + "No Arenas found!");
+					return true;
+				}
+
+				StringBuilder builder = new StringBuilder();
+
+				for (int i = 0; i < Util.getArenas().size(); i++) {
+					if (i != 0)
+						builder.append("§7, ");
+					builder.append("§4" + Util.getArenas().get(i));
+				}
+
+				player.sendMessage(Util.prefix + "Arenas: " + builder.toString());
+
+			} else {
+				player.sendMessage(Util.prefix + "Argument not found. Try §c/tr §7for help!");
 			}
 		}
 		return false;
