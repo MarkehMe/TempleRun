@@ -316,6 +316,7 @@ public class Util {
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr topten           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Show TopTen Players");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr pickup           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "En-/Disable Coin Pickup");
 		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr delete [NAME]  " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Delete Arena");
+		player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "● §7/tr arenas           " + ChatColor.DARK_GRAY + "= " + ChatColor.GRAY + "Shows all Arenas");
 	}
 
 	public static void safeCheckPoint(String player, Location loc) {

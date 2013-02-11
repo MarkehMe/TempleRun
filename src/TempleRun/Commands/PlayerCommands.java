@@ -66,7 +66,7 @@ public class PlayerCommands implements CommandExecutor {
 				}
 
 				if (args.length != 2) {
-					player.sendMessage(prefix + "Wrong usage: /tr join <NAME>");
+					player.sendMessage(prefix + "Wrong usage: /tr join <NAME>. To See all Arenas type §c/tr arenas");
 					return true;
 				}
 
