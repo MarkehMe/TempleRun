@@ -82,8 +82,8 @@ public class PlayerListener implements Listener {
 				return;
 			}
 
-			if (!event.getMessage().startsWith("/tr") && !event.getMessage().startsWith("/templerun")) {
-				player.sendMessage(Util.prefix + "You can just execute TempleRun Commands in TempleRun!");
+			if (!event.getMessage().startsWith("/tr") || !event.getMessage().startsWith("/templerun")) {
+				player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "You can just execute TempleRun Commands in TempleRun!");
 				event.setCancelled(true);
 			}
 

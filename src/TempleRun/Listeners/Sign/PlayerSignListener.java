@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,12 +19,12 @@ import TempleRun.Util.Util;
 
 public class PlayerSignListener implements Listener {
 
-	private static String prefix = ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "] " + ChatColor.GRAY;
-
 	public TempleRun main;
+	private FileConfiguration config;
 
 	public PlayerSignListener(TempleRun main) {
 		this.main = main;
+		this.config = main.getConfig();
 	}
 
 	@EventHandler
@@ -33,13 +34,13 @@ public class PlayerSignListener implements Listener {
 
 			Player player = event.getPlayer();
 			if (!player.hasPermission("templerun.sign.create")) {
-				player.sendMessage(prefix + "You dont have Permissions!");
+				player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 				event.getBlock().breakNaturally();
 				return;
 			} else {
 				event.setLine(0, ChatColor.RED + "TempleRun");
 				event.setLine(1, ChatColor.BLUE + "Finish");
-				player.sendMessage(prefix + "Sign successful created!");
+				player.sendMessage(Util.replace(config.getString("Messages.Sign.successful")));
 			}
 
 		}
@@ -69,12 +70,12 @@ public class PlayerSignListener implements Listener {
 
 			/* Permissions */
 			if (!player.hasPermission("templerun.play")) {
-				player.sendMessage(prefix + "You dont have Permissions!");
+				player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 				return;
 			}
 
 			if (!Util.isPlaying(player.getName())) {
-				player.sendMessage(prefix + "You dont play TempleRun at the Moment!");
+				player.sendMessage(Util.replace(config.getString("Messages.prefix")) + "You dont play TempleRun at the Moment!");
 				return;
 			}
 
@@ -101,7 +102,7 @@ public class PlayerSignListener implements Listener {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 			player.removePotionEffect(PotionEffectType.SPEED);
 
-			player.sendMessage(prefix + "You finished TempleRun!");
+			player.sendMessage(Util.replace(config.getString("Messages.prefix")) + "You finished TempleRun!");
 			player.sendMessage(ChatColor.GRAY + "Your Time: " + ChatColor.GREEN + ergebnis + " seconds!");
 			player.sendMessage(ChatColor.GRAY + "Recieved Coins Amount: " + ChatColor.GREEN + coins);
 			

@@ -16,12 +16,11 @@ import TempleRun.TempleRun;
 public class Util {
 
 	public static TempleRun main;
-	public static String prefix = ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "] " + ChatColor.GRAY;
 
 	public Util(TempleRun main) {
 		Util.main = main;
 	}
-
+	
 	public static HashMap<String, Long> players = new HashMap<String, Long>();
 	public static HashMap<String, Location> oldLoc = new HashMap<String, Location>();
 	public static HashMap<String, HashMap<Integer, Integer>> diamond = new HashMap<String, HashMap<Integer, Integer>>();
@@ -41,6 +40,26 @@ public class Util {
 		if (players.containsKey(player))
 			return true;
 		return false;
+	}
+	
+	public static String replace(String message) {
+		return message.replaceAll("(?i)&([a-n0-9])", "§$1").replaceAll("%prefix", replaceColor(main.getConfig().getString("Messages.prefix")));
+	}
+	
+	public static String replaceColor(String message) {
+		return message.replaceAll("(?i)&([a-n0-9])", "§$1");
+	}
+	
+	public static String replace(String message, String args) {
+		return message.replaceAll("(?i)&([a-n0-9])", "§$1").replaceAll("%args", args).replace("%arena", args).replaceAll("%prefix", replaceColor(main.getConfig().getString("Messages.prefix")));
+	}
+	
+	public static String replace(String message, Player player) {
+		return message.replaceAll("(?i)&([a-n0-9])", "§$1").replaceAll("%player", player.getName()).replaceAll("%prefix", replaceColor(main.getConfig().getString("Messages.prefix")));
+	}
+	
+	public static String replace(String message, int i) {
+		return message.replaceAll("(?i)&([a-n0-9])", "§$1").replaceAll("%amount", String.valueOf(i)).replaceAll("%prefix", replaceColor(main.getConfig().getString("Messages.prefix")));
 	}
 
 	/* Den Spieler zu TempleRun hinzufügen */
@@ -122,7 +141,7 @@ public class Util {
 		Util.game = false;
 
 		if (kickall)
-			kickAll(main, prefix + "TempleRun got stopped and all Players kicked too!");
+			kickAll(main, Util.replace(main.getConfig().getString("Messages.prefix")) + "TempleRun got stopped and all Players kicked too!");
 	}
 
 	/* Das Spiel wieder starten */
@@ -255,7 +274,7 @@ public class Util {
 				}
 
 			} catch (NumberFormatException e) {
-				player.sendMessage(prefix + "Cant safe CheckPoint! Contact Admin! He should look into the config.yml!");
+				player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "Cant safe CheckPoint! Contact Admin! He should look into the config.yml!");
 			}
 
 		}

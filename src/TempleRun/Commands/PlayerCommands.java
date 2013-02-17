@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -27,14 +28,15 @@ public class PlayerCommands implements CommandExecutor {
 
 	/* Prefix */
 	private static String prefix = ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "] " + ChatColor.GRAY;
-	private String noPerms = prefix + "You dont have Permissions!";
-
+	
 	LinkedHashMap<String, Integer> topten = new LinkedHashMap<String, Integer>();
 
 	public TempleRun main;
+	private FileConfiguration config;
 
 	public PlayerCommands(TempleRun main) {
 		this.main = main;
+		this.config = main.getConfig();
 	}
 
 	@Override
@@ -61,27 +63,27 @@ public class PlayerCommands implements CommandExecutor {
 
 				/* Permissions */
 				if (!player.hasPermission("templerun.play")) {
-					player.sendMessage(noPerms);
+					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 					return true;
 				}
 
 				if (args.length != 2) {
-					player.sendMessage(prefix + "Wrong usage: /tr join <NAME>. To See all Arenas type §c/tr arenas");
+					player.sendMessage(Util.replace(config.getString("Messages.wrong_usage")));
 					return true;
 				}
 
 				if (!Util.isAllSet(main, args[1])) {
-					player.sendMessage(prefix + "TempleRun Arena not found -> §c" + args[1] + "§7!");
+					player.sendMessage(Util.replace(config.getString("Messages.Join.arena_not_found"), args[1]));
 					return true;
 				}
 
 				if (!Util.isRunning()) {
-					player.sendMessage(prefix + "TempleRun is stopped at the moment!");
+					player.sendMessage(Util.replace(config.getString("Messages.Join.is_stopped")));
 					return true;
 				}
 
 				if (Util.isPlaying(player.getName())) {
-					player.sendMessage(prefix + "You are already in TempleRun!");
+					player.sendMessage(Util.replace(config.getString("Messages.Join.already_in_tr")));
 					return true;
 				}
 
@@ -91,13 +93,12 @@ public class PlayerCommands implements CommandExecutor {
 				Util.saveOldLoc(player);
 
 				Util.teleport(player, Util.getSpawnLocation(main, args[1]));
-				player.sendMessage(prefix + "You joined TempleRun! Good Luck!");
+				player.sendMessage(Util.replace(config.getString("Messages.Join.join_tr"), args[1]));
 				player.removePotionEffect(PotionEffectType.SPEED);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 
 				if (player.hasPermission("templerun.pickup") && main.pickup) {
-					player.sendMessage(ChatColor.DARK_RED + "Attention: " + ChatColor.GRAY + "You used the Command /tr pickup!");
-					player.sendMessage(ChatColor.GRAY + "That means, you will pickup the Coins!");
+					player.sendMessage(Util.replace(config.getString("Messages.Join.attention_pickup")));
 				}
 
 				main.cload.load();
@@ -112,12 +113,12 @@ public class PlayerCommands implements CommandExecutor {
 
 				/* Permissions */
 				if (!player.hasPermission("templerun.play")) {
-					player.sendMessage(noPerms);
+					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 					return true;
 				}
 
 				if (!Util.isPlaying(player.getName())) {
-					player.sendMessage(prefix + "You are not in TempleRun!");
+					player.sendMessage(Util.replace(config.getString("Messages.Leave.not_in_tr")));
 					return true;
 				}
 
@@ -131,60 +132,66 @@ public class PlayerCommands implements CommandExecutor {
 
 				Util.arenaname.remove(player.getName());
 
-				player.sendMessage(prefix + "You have left TempleRun and teleported to your last location!");
+				player.sendMessage(Util.replace(config.getString("Messages.Leave.leave_tr")));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 5, 1));
 				player.removePotionEffect(PotionEffectType.SPEED);
 
 			} else if (args[0].equalsIgnoreCase("set")) {
 
 				if (!player.hasPermission("templerun.set")) {
-					player.sendMessage(noPerms);
+					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 					return true;
 				}
 
 				if (args.length == 2) {
 
 					Util.setSpawnLocation(main, player, args[1]);
-					player.sendMessage(prefix + "TempleRun SpawnLocation set!");
+					player.sendMessage(Util.replace(config.getString("Messages.Set.spawn_set"), args[1]));
 
 				} else {
-					player.sendMessage(prefix + "Wrong Usage! /tr set <NAME>");
+					player.sendMessage(Util.replace(config.getString("Messages.wrong_usage")));
 				}
 			} else if (args[0].equalsIgnoreCase("stop")) {
 
 				if (!player.hasPermission("templerun.stop")) {
-					player.sendMessage(noPerms);
+					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
+					return true;
+				}
+				
+				if (!Util.isRunning()) {
+					player.sendMessage(Util.replace(config.getString("Messages.Stop.is_stopped")));
 					return true;
 				}
 
 				if (args.length == 1) {
 
 					Util.stopGame(main.getConfig().getBoolean("TempleRun.KickPlayers"));
-					player.sendMessage(prefix + "You stopped TempleRun!");
+					player.sendMessage(Util.replace(config.getString("Messages.Stop.stop")));
 
 				} else {
-					player.sendMessage(prefix + "Wrong Usage!");
+					player.sendMessage(Util.replace(config.getString("Messages.wrong_usage")));
 				}
 			} else if (args[0].equalsIgnoreCase("start")) {
 
 				if (!player.hasPermission("templerun.start")) {
-					player.sendMessage(noPerms);
+					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 					return true;
 				}
 
 				if (args.length == 1) {
 
 					if (Util.isRunning()) {
-						player.sendMessage(prefix + "TempleRun is already Running!");
+						player.sendMessage(Util.replace(config.getString("Messages.Start.is_started")));
 						return true;
 					}
 
 					Util.startGame();
-					player.sendMessage(prefix + "You started TempleRun!");
+					player.sendMessage(Util.replace(config.getString("Messages.Start.start")));
 				}
 			} else if (args[0].equalsIgnoreCase("kick")) {
 
 				if (!player.hasPermission("templerun.kick")) {
-					player.sendMessage(noPerms);
+					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 					return true;
 				}
 
@@ -193,30 +200,28 @@ public class PlayerCommands implements CommandExecutor {
 					Player p = main.getServer().getPlayer(args[1]);
 
 					if (p == null) {
-						player.sendMessage(prefix + "Player " + ChatColor.GREEN + args[1] + ChatColor.GRAY + " not found!");
+						player.sendMessage(Util.replace(config.getString("Messages.Kick.offline"), args[1]));
 						return true;
 					} else {
 
-						String pname = p.getName();
-
-						if (!Util.isPlaying(pname)) {
-							player.sendMessage(prefix + "This Player is not in TempleRun!");
+						if (!Util.isPlaying(p.getName())) {
+							player.sendMessage(Util.replace(config.getString("Messages.Kick.not_in_tr")));
 							return true;
 						}
 
 						Util.kickPlayer(p);
-						player.sendMessage(prefix + "You kicked " + ChatColor.GREEN + pname + ChatColor.GRAY + " out of TempleRun!");
+						player.sendMessage(Util.replace(config.getString("Messages.Kick.kick_player"), p));
 						return true;
 					}
 
 				} else {
-					player.sendMessage(prefix + "Wrong Usage!");
+					player.sendMessage(Util.replace(config.getString("Messages.wrong_usage")));
 				}
 
 			} else if (args[0].equalsIgnoreCase("give")) {
 
 				if (!player.hasPermission("templerun.give")) {
-					player.sendMessage(noPerms);
+					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 					return true;
 				}
 
@@ -225,7 +230,7 @@ public class PlayerCommands implements CommandExecutor {
 					try {
 						Integer.parseInt(args[1]);
 					} catch (NumberFormatException e) {
-						player.sendMessage(prefix + "Please use Numbers as Amount!");
+						player.sendMessage(Util.replace(config.getString("Messages.Give.only_numbers")));
 					}
 
 					ArrayList<String> desc = new ArrayList<String>();
@@ -239,17 +244,17 @@ public class PlayerCommands implements CommandExecutor {
 					is.setItemMeta(im);
 
 					player.getInventory().addItem(is);
-					player.sendMessage(prefix + ChatColor.GREEN + args[1] + ChatColor.GRAY + " Coins added to your inventory!");
+					player.sendMessage(Util.replace(config.getString("Messages.Give.give_coins"), Integer.valueOf(args[1])));
 
 				} else {
-					player.sendMessage(prefix + "Wrong Usage!");
+					player.sendMessage(Util.replace(config.getString("Messages.wrong_usage")));
 				}
 			} else if (args[0].equalsIgnoreCase("info")) {
 
 				if (args.length == 1) {
 
 					if (main.getConfigLoader().getString("Players." + player.getName()) == null) {
-						player.sendMessage(Util.prefix + "You never played or won TempleRun before!");
+						player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "You never played or won TempleRun before!");
 						return true;
 					}
 
@@ -269,11 +274,11 @@ public class PlayerCommands implements CommandExecutor {
 						player.sendMessage(ChatColor.GRAY + "Server best time: §c§l" + besttime + " sec");
 						player.sendMessage(ChatColor.GRAY + "Server best coins: §c§l" + bestcoins);
 					} catch (NullPointerException e) {
-						player.sendMessage(Util.prefix + "There was an NullPointerException!");
+						player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "There was an NullPointerException!");
 					}
 
 				} else {
-					player.sendMessage(Util.prefix + "Wrong Usage!");
+					player.sendMessage(Util.replace(config.getString("Messages.wrong_usage")));
 				}
 			} else if (args[0].equalsIgnoreCase("topten")) {
 
@@ -333,54 +338,54 @@ public class PlayerCommands implements CommandExecutor {
 					Integer top10Value = topten.get(top10Player);
 					player.sendMessage("§410§7. §c§o" + top10Player + "  §7||  §c§o" + top10Value);
 				} catch (Exception e) {
-					player.sendMessage(Util.prefix + "There are no TopTen Players at the Moment!");
+					player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "There are no TopTen Players at the Moment!");
 				}
 
 				topten.clear();
 			} else if (args[0].equalsIgnoreCase("pickup")) {
 
 				if (!player.hasPermission("templerun.pickup")) {
-					player.sendMessage(Util.prefix + "You dont have Permissions.");
+					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 					return true;
 				}
 
 				if (args.length != 1) {
-					player.sendMessage(Util.prefix + "Wrong Usage!");
+					player.sendMessage(Util.replace(config.getString("Messages.wrong_usage")));
 					return true;
 				}
 
 				if (main.pickup) {
-					player.sendMessage(Util.prefix + "Coin Pickup disabled!");
+					player.sendMessage(Util.replace(config.getString("Messages.Pickup.disable")));
 					main.pickup = false;
 				} else {
 					main.pickup = true;
-					player.sendMessage(Util.prefix + "Coin Pickup enabled for the Players with the Permissions: §ctemplerun.pickup");
+					player.sendMessage(Util.replace(config.getString("Messages.Pickup.enable")));
 				}
 
 			} else if (args[0].equalsIgnoreCase("delete")) {
 
 				if (!player.hasPermission("templerun.delete")) {
-					player.sendMessage(Util.prefix + "You dont have Permissions.");
+					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 					return true;
 				}
 
 				if (args.length != 2) {
-					player.sendMessage(Util.prefix + "Wrong Usage!");
+					player.sendMessage(Util.replace(config.getString("Messages.wrong_usage")));
 					return true;
 				}
 
 				if (!Util.isAllSet(main, args[1])) {
-					player.sendMessage(prefix + "TempleRun Arena not found -> §c" + args[1] + "§7!");
+					player.sendMessage(Util.replace(config.getString("Messages.Delete.no_found"), args[1]));
 					return true;
 				}
 
 				Util.deleteArena(args[1]);
-				player.sendMessage(prefix + "Arena deleted!");
+				player.sendMessage(Util.replace(config.getString("Messages.Delete.delete"), args[1]));
 
 			} else if (args[0].equalsIgnoreCase("arenas")) {
 
 				if (main.getConfig().getString("TempleRun.Arenas") == null || main.getConfig().getStringList("TempleRun.Arenas").isEmpty()) {
-					player.sendMessage(Util.prefix + "No Arenas found!");
+					player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "No Arenas found!");
 					return true;
 				}
 
@@ -392,10 +397,10 @@ public class PlayerCommands implements CommandExecutor {
 					builder.append("§4" + Util.getArenas().get(i));
 				}
 
-				player.sendMessage(Util.prefix + "Arenas: " + builder.toString());
+				player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "Arenas: " + builder.toString());
 
 			} else {
-				player.sendMessage(Util.prefix + "Argument not found. Try §c/tr §7for help!");
+				player.sendMessage(Util.replace(config.getString("Messages.argument_not_found")));
 			}
 		}
 		return false;

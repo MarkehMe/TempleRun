@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,9 +19,11 @@ import TempleRun.Util.Util;
 public class PlayerMoveListener implements Listener {
 
 	public TempleRun main;
+	private FileConfiguration config;
 
 	public PlayerMoveListener(TempleRun main) {
 		this.main = main;
+		this.config = main.getConfig();
 	}
 
 	@EventHandler
@@ -91,12 +94,12 @@ public class PlayerMoveListener implements Listener {
 					Location loc = Util.getCheckPoint(player.getName());
 					player.teleport(loc);
 					Util.checkpoint.remove(player.getName());
-					player.sendMessage(Util.prefix + "You dropped out of TempleRun. Try again at your CheckPoint!!");
+					player.sendMessage(Util.replace(config.getString("Messages.OutOfTR.dropped_out_checkpoint")));
 					return;
 				}
 				
 				Util.teleport(player, Util.getSpawnLocation(main, arenaname));
-				player.sendMessage(Util.prefix + "You dropped out of TempleRun. Try again!");
+				player.sendMessage(Util.replace(config.getString("Messages.OutOfTR.dropped_out")));
 			}
 		}
 

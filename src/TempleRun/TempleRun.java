@@ -20,7 +20,7 @@ public class TempleRun extends JavaPlugin {
 
 	public Util util;
 	public PlayerMoveListener mlistener;
-	public PlayerSignListener slistener;
+	public PlayerSignListener slistener ;
 	public PlayerListener plistener;
 	public CoinListener clistener;
 	public SplashListener spllistener;
@@ -79,7 +79,7 @@ public class TempleRun extends JavaPlugin {
 	@Override
 	public void onDisable() {
 
-		Util.kickAll(this, Util.prefix + "The Server got reloaded!");
+		Util.kickAll(this, Util.replace(getConfig().getString("Messages.prefix")) + "The Server got reloaded!");
 
 	}
 

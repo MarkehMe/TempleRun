@@ -1,3 +1,10 @@
+# %arena replace the Arena name
+# %prefix replace the prefix
+# %args replace the Argument
+# %player replace the Player
+# Support ColorCodes 0-9 a-f
+
+
 TempleRun:
   WinItem:
   - 264,4
@@ -7,3 +14,48 @@ TempleRun:
   - 15
   - 20
   Arenas: []
+
+Messages:
+  prefix: '&6[&bTempleRun&6] &7'
+  no_Permissions: '%prefix You dont have Permissions'
+  argument_not_found: '%prefix Argument not found'
+  wrong_usage: '%prefix Wrong Usage'
+  
+  Join:
+    join_tr: '%prefix You joined %arena'
+    is_stopped: '%prefix TempleRun is stopped'
+    already_in_tr: '%prefix You are already in templerun'
+    attention_pickup: '%prefix Attention: You are in the Pickup mode'
+    arena_not_found: '%prefix Arena not found &b%args'
+  Leave:
+    leave_tr: '%prefix You leave templerun and get teleported back to your last location'
+    not_in_tr: '%prefix You are not in templerun'
+  Set:
+    spawn_set: '%prefix Spawn set for the Arena &b%args'
+  Start:
+    is_started: '%prefix The Game is already started'
+    start: '%prefix You started the game'
+  Stop:
+    is_stopped: '%prefixThe Game is already stopped'
+    stop: '%prefix You stop the Game'
+  Kick:
+    kick_player: '%prefix You kicked &b%player'
+    offline: '%prefix This Player is Offline'
+    not_in_tr: '%prefix This Player is not in TempleRun'
+  Give:
+    only_numbers: '%prefix Please only use numbers'
+    give_coins: '%prefix You got &b%amount &7coins'
+  Pickup:
+    disable: '%prefix Coinpickup disabled'
+    enable: '%prefix Coinpickup enabled for the Player with the Permissions templerun.pickup'
+  Delete:
+    not_found: '%prefix Arena not found &b%args'
+    delete: '%prefix Arena deleted &b%arena' 
+  OutOfTR:
+    dropped_out_checkpoint: '%prefix You dropped out of templerun. Try again at your checkpointOut'
+    dropped_out: '%prefix You dropped out of templerun'
+  Sign:
+    successful: '%prefix Sign successful created'
+    
+  
+  
