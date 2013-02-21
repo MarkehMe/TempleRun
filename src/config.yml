@@ -2,10 +2,13 @@
 # %prefix replace the prefix
 # %args replace the Argument
 # %player replace the Player
+# %coins show the Coins you got! Just for score
+# %time show the Time you run! Just for score
 # Support ColorCodes 0-9 a-f
 
 
 TempleRun:
+  CheckUpdates: true
   WinItem:
   - 264,4
   KickPlayers: true
@@ -16,7 +19,7 @@ TempleRun:
   Arenas: []
 
 Messages:
-  prefix: '&6[&bTempleRun&6] &7'
+  prefix: '&8&l[&4TempleRun&8&l]&7'
   no_Permissions: '%prefix You dont have Permissions'
   argument_not_found: '%prefix Argument not found'
   wrong_usage: '%prefix Wrong Usage'
@@ -56,6 +59,11 @@ Messages:
     dropped_out: '%prefix You dropped out of templerun'
   Sign:
     successful: '%prefix Sign successful created'
+  Info:
+    noScore: '%prefix You dont have a Score at the Moment'
+    score: '%prefix Coins: &c%coins   &7Time: &c%time'
+    other_no_score: '%prefix This Player hasnt a Score'
+    other_score: '%prefix Coins: &c%coins   &7Time: &c%time'
     
   
   

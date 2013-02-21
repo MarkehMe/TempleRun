@@ -75,7 +75,7 @@ public class PlayerSignListener implements Listener {
 			}
 
 			if (!Util.isPlaying(player.getName())) {
-				player.sendMessage(Util.replace(config.getString("Messages.prefix")) + "You dont play TempleRun at the Moment!");
+				player.sendMessage(Util.replace(config.getString("Messages.prefix")) + " You dont play TempleRun at the Moment!");
 				return;
 			}
 
@@ -102,71 +102,13 @@ public class PlayerSignListener implements Listener {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2400000, 2));
 			player.removePotionEffect(PotionEffectType.SPEED);
 
-			player.sendMessage(Util.replace(config.getString("Messages.prefix")) + "You finished TempleRun!");
+			player.sendMessage(Util.replace(config.getString("Messages.prefix")) + " You finished TempleRun!");
 			player.sendMessage(ChatColor.GRAY + "Your Time: " + ChatColor.GREEN + ergebnis + " seconds!");
 			player.sendMessage(ChatColor.GRAY + "Recieved Coins Amount: " + ChatColor.GREEN + coins);
 			
 			Util.arenaname.remove(player.getName());
 			
-			main.cload.load();
-
-			if (main.getConfigLoader().getString("Players." + player.getName()) == null) {
-				main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + coins);
-				main.saveConfigLoader();
-			} else {
-
-				String name = main.getConfigLoader().getString("Players." + player.getName());
-				String[] splitted = name.split(":");
-
-				try {
-
-					Integer.valueOf(splitted[0]);
-					Integer.valueOf(splitted[1]);
-
-				} catch (NumberFormatException e) {
-					return;
-				}
-
-				int oldcoins = Integer.valueOf(splitted[1]);
-				int oldtime = Integer.valueOf(splitted[0]);
-
-				if (oldcoins < coins && oldtime > ergebnis) {
-					main.getConfigLoader().set("Players." + player.getName(), oldtime + ":" + coins);
-				} else if (oldcoins > coins && oldtime > ergebnis) {
-					main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + oldcoins);
-				} else if (oldcoins >= coins && oldtime <= ergebnis) {
-					main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + oldcoins);
-				} else {
-					main.getConfigLoader().set("Players." + player.getName(), ergebnis + ":" + coins);
-				}
-
-				main.cload.save();
-			}
-
-			if (main.getConfigLoader().getString("ServerBest.Time") == null) {
-				main.getConfigLoader().set("ServerBest.Time", ergebnis);
-				main.cload.save();
-			}
-			if (main.getConfigLoader().getString("ServerBest.Coins") == null) {
-				main.getConfigLoader().set("ServerBest.Coins", coins);
-				main.cload.save();
-			}
-
-			if ((main.getConfigLoader().getString("ServerBest.Coins") != null && main.getConfigLoader().getString("ServerBest.Time") != null)) {
-
-				long besttime = main.getConfigLoader().getLong("ServerBest.Time");
-				int bestcoins = main.getConfigLoader().getInt("ServerBest.Coins");
-
-				if (besttime > ergebnis) {
-					main.getConfigLoader().set("ServerBest.Time", ergebnis);
-				}
-				if (bestcoins < coins) {
-					main.getConfigLoader().set("ServerBest.Coins", coins);
-				}
-				main.cload.save();
-			}
-
-			main.cload.save();
+			main.iutil.addTopPlayer(player.getName(), (int) ergebnis, coins);
 		}
 	}
 

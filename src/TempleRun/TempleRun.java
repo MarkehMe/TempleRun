@@ -14,13 +14,18 @@ import TempleRun.Listeners.Features.SplashListener;
 import TempleRun.Listeners.Move.PlayerMoveListener;
 import TempleRun.Listeners.Sign.PlayerSignListener;
 import TempleRun.Metrics.Metrics;
+import TempleRun.Update.Updater;
+import TempleRun.Update.Updater.UpdateResult;
+import TempleRun.Update.Updater.UpdateType;
+import TempleRun.Util.InfoUtil;
 import TempleRun.Util.Util;
 
 public class TempleRun extends JavaPlugin {
 
 	public Util util;
+	public InfoUtil iutil;
 	public PlayerMoveListener mlistener;
-	public PlayerSignListener slistener ;
+	public PlayerSignListener slistener;
 	public PlayerListener plistener;
 	public CoinListener clistener;
 	public SplashListener spllistener;
@@ -31,13 +36,15 @@ public class TempleRun extends JavaPlugin {
 	public List<String> item;
 	public List<String> safepoints;
 
+	public Updater update;
+
 	public boolean pickup = false;
 
-	public static boolean update = false;
 	public static long size = 0;
 
+	public boolean updateAvailable;
+
 	public ConfigLoader cload;
-	
 
 	@Override
 	public void onEnable() {
@@ -47,6 +54,7 @@ public class TempleRun extends JavaPlugin {
 
 		/* Objekt registrieren */
 		util = new Util(this);
+		iutil = new InfoUtil(this);
 
 		slistener = new PlayerSignListener(this);
 		mlistener = new PlayerMoveListener(this);
@@ -59,6 +67,11 @@ public class TempleRun extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(plistener, this);
 		getServer().getPluginManager().registerEvents(clistener, this);
 		getServer().getPluginManager().registerEvents(spllistener, this);
+
+		if (getConfig().getBoolean("TempleRun.CheckUpdates")) {
+			update = new Updater(this, "templerun", getFile(), UpdateType.NO_DOWNLOAD, false);
+			updateAvailable = update.getResult() == UpdateResult.UPDATE_AVAILABLE;
+		}
 
 		cmd = new PlayerCommands(this);
 		getCommand("templerun").setExecutor(cmd);

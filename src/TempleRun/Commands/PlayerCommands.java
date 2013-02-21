@@ -1,12 +1,7 @@
 package TempleRun.Commands;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -28,7 +23,7 @@ public class PlayerCommands implements CommandExecutor {
 
 	/* Prefix */
 	private static String prefix = ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "] " + ChatColor.GRAY;
-	
+
 	LinkedHashMap<String, Integer> topten = new LinkedHashMap<String, Integer>();
 
 	public TempleRun main;
@@ -102,12 +97,7 @@ public class PlayerCommands implements CommandExecutor {
 				}
 
 				main.cload.load();
-
-				if (main.getConfigLoader().getString("Players." + player.getName()) == null) {
-					main.getConfigLoader().set("Players." + player.getName(), "0:0");
-					main.cload.save();
-					return true;
-				}
+				main.cload.save();
 
 			} else if (args[0].equalsIgnoreCase("leave")) {
 
@@ -157,7 +147,7 @@ public class PlayerCommands implements CommandExecutor {
 					player.sendMessage(Util.replace(config.getString("Messages.no_Permissions")));
 					return true;
 				}
-				
+
 				if (!Util.isRunning()) {
 					player.sendMessage(Util.replace(config.getString("Messages.Stop.is_stopped")));
 					return true;
@@ -253,95 +243,32 @@ public class PlayerCommands implements CommandExecutor {
 
 				if (args.length == 1) {
 
-					if (main.getConfigLoader().getString("Players." + player.getName()) == null) {
-						player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "You never played or won TempleRun before!");
+					if (!main.iutil.hasScore(player.getName())) {
+						player.sendMessage(Util.replace(config.getString("Messages.Info.noScore")));
 						return true;
 					}
 
-					try {
-
-						String playerdata = main.getConfigLoader().getString("Players." + player.getName());
-						String[] splitted = playerdata.split(":");
-
-						String time = splitted[0];
-						String besttime = main.getConfigLoader().getString("ServerBest.Time");
-						String coins = splitted[1];
-						String bestcoins = main.getConfigLoader().getString("ServerBest.Coins");
-
-						player.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[" + ChatColor.DARK_RED + "TempleRun §c§lInfo" + ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "]");
-						player.sendMessage(ChatColor.GRAY + "Your best time: §c§l" + time + " sec");
-						player.sendMessage(ChatColor.GRAY + "Your best coins amount: §c§l" + coins);
-						player.sendMessage(ChatColor.GRAY + "Server best time: §c§l" + besttime + " sec");
-						player.sendMessage(ChatColor.GRAY + "Server best coins: §c§l" + bestcoins);
-					} catch (NullPointerException e) {
-						player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "There was an NullPointerException!");
+					int time = main.cload.getConfig().getInt("Players." + player.getName() + ".Time");
+					int coins = main.cload.getConfig().getInt("Players." + player.getName() + ".Coins");
+					player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + " Your Score:");
+					player.sendMessage(main.iutil.replace(main.getConfig().getString("Messages.Info.score"), "" + coins, "" + time));
+				} else if (args.length == 2) {
+					
+					if(!main.iutil.hasScore(args[1])) {
+						player.sendMessage(Util.replace(main.getConfig().getString("Messages.Info.other_no_score")));
+						return true;
 					}
-
+					int time = main.cload.getConfig().getInt("Players." + args[1] + ".Time");
+					int coins = main.cload.getConfig().getInt("Players." + args[1] + ".Coins");
+					player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + " Score of §c" + args[1] + "§7:");
+					player.sendMessage(main.iutil.replace(main.getConfig().getString("Messages.Info.score"), "" + coins, "" + time));
+					
 				} else {
 					player.sendMessage(Util.replace(config.getString("Messages.wrong_usage")));
 				}
+
 			} else if (args[0].equalsIgnoreCase("topten")) {
-
-				for (Entry<String, Object> s : main.getConfigLoader().getValues(true).entrySet()) {
-					if (String.valueOf(s).startsWith("Players.")) {
-
-						String e = String.valueOf(s).replace(":", " ").replace("=", " ").replace(".", " ");
-						String[] splitted = e.split(" ");
-
-						String name = splitted[1];
-						String coins = splitted[2];
-
-						topten.put(name, Integer.valueOf(coins));
-					}
-				}
-				topten = sortMap(topten);
-
-				try {
-					// Get the TopTen Players
-					String top1Player = (String) topten.keySet().toArray()[0];
-					Integer top1Value = topten.get(top1Player);
-					player.sendMessage("§41§7. §c§o" + top1Player + "  §7||  §c§o" + top1Value);
-
-					String top2Player = (String) topten.keySet().toArray()[1];
-					Integer top2Value = topten.get(top2Player);
-					player.sendMessage("§42§7. §c§o" + top2Player + "  §7||  §c§o" + top2Value);
-
-					String top3Player = (String) topten.keySet().toArray()[2];
-					Integer top3Value = topten.get(top3Player);
-					player.sendMessage("§43§7. §c§o" + top3Player + "  §7||  §c§o" + top3Value);
-
-					String top4Player = (String) topten.keySet().toArray()[3];
-					Integer top4Value = topten.get(top4Player);
-					player.sendMessage("§44§7. §c§o" + top4Player + "  §7||  §c§o" + top4Value);
-
-					String top5Player = (String) topten.keySet().toArray()[4];
-					Integer top5Value = topten.get(top5Player);
-					player.sendMessage("§45§7. §c§o" + top5Player + "  §7||  §c§o" + top5Value);
-
-					String top6Player = (String) topten.keySet().toArray()[5];
-					Integer top6Value = topten.get(top6Player);
-					player.sendMessage("§46§7. §c§o" + top6Player + "  §7||  §c§o" + top6Value);
-
-					String top7Player = (String) topten.keySet().toArray()[6];
-					Integer top7Value = topten.get(top7Player);
-					player.sendMessage("§47§7. §c§o" + top7Player + "  §7||  §c§o" + top7Value);
-
-					String top8Player = (String) topten.keySet().toArray()[7];
-					Integer top8Value = topten.get(top8Player);
-					player.sendMessage("§48§7. §c§o" + top8Player + "  §7||  §c§o" + top8Value);
-
-					String top9Player = (String) topten.keySet().toArray()[8];
-					Integer top9Value = topten.get(top9Player);
-					player.sendMessage("§49§7. §c§o" + top9Player + "  §7||  §c§o" + top9Value);
-
-					String top10Player = (String) topten.keySet().toArray()[9];
-					Integer top10Value = topten.get(top10Player);
-					player.sendMessage("§410§7. §c§o" + top10Player + "  §7||  §c§o" + top10Value);
-				} catch (Exception e) {
-					player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "There are no TopTen Players at the Moment!");
-				}
-
-				topten.clear();
+				player.sendMessage("In process. Coming soon.");
 			} else if (args[0].equalsIgnoreCase("pickup")) {
 
 				if (!player.hasPermission("templerun.pickup")) {
@@ -397,34 +324,25 @@ public class PlayerCommands implements CommandExecutor {
 					builder.append("§4" + Util.getArenas().get(i));
 				}
 
-				player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + "Arenas: " + builder.toString());
+				player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + " Arenas: " + builder.toString());
 
+			} else if(args[0].equalsIgnoreCase("update")) { 
+				
+				if(!player.hasPermission("templerun.update") || !player.getName().equalsIgnoreCase("xapfeltortexp")) {
+					player.sendMessage(Util.replace(main.getConfig().getString("Messages.no_Permissions")));
+					return true;
+				}
+				
+				if(main.updateAvailable) {
+					player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + " There is an Update available!");
+				} else {
+					player.sendMessage(Util.replace(main.getConfig().getString("Messages.prefix")) + " Your TempleRun is up to date!");
+				}
+				
 			} else {
 				player.sendMessage(Util.replace(config.getString("Messages.argument_not_found")));
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Convert my sortedList into an Big to Low sorted List
-	 * 
-	 * @param map
-	 * @return
-	 */
-	private LinkedHashMap<String, Integer> sortMap(Map<String, Integer> map) {
-		SortedSet<Map.Entry<String, Integer>> sortedEntries = new TreeSet<Map.Entry<String, Integer>>(new Comparator<Map.Entry<String, Integer>>() {
-			@Override
-			public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
-				int res = e2.getValue().compareTo(e1.getValue());
-				return res != 0 ? res : 1;
-			}
-		});
-		sortedEntries.addAll(map.entrySet());
-		LinkedHashMap<String, Integer> sorted_map = new LinkedHashMap<String, Integer>();
-		for (Entry<String, Integer> e : sortedEntries) {
-			sorted_map.put(e.getKey(), e.getValue());
-		}
-		return sorted_map;
 	}
 }
