@@ -1,69 +1,67 @@
-# %arena replace the Arena name
-# %prefix replace the prefix
-# %args replace the Argument
-# %player replace the Player
-# %coins show the Coins you got! Just for score
-# %time show the Time you run! Just for score
-# Support ColorCodes 0-9 a-f
-
+# Plugin developed by xapfeltortexp. Do you want to have your own plugin? Then contact me at http://dev.bukkit.org/profiles/xapfeltortexp
 
 TempleRun:
-  CheckUpdates: true
-  WinItem:
-  - 264,4
-  KickPlayers: true
-  SafeCheckPointAt:
-  - 10
-  - 15
-  - 20
-  Arenas: []
-
-Messages:
-  prefix: '&8&l[&4TempleRun&8&l]&7'
-  no_Permissions: '%prefix You dont have Permissions'
-  argument_not_found: '%prefix Argument not found'
-  wrong_usage: '%prefix Wrong Usage'
+  configVersion: 1.3.0
+  # Automatic Update Checker
+  Updater:
+    checkUpdates: true
   
-  Join:
-    join_tr: '%prefix You joined %arena'
-    is_stopped: '%prefix TempleRun is stopped'
-    already_in_tr: '%prefix You are already in templerun'
-    attention_pickup: '%prefix Attention: You are in the Pickup mode'
-    arena_not_found: '%prefix Arena not found &b%args'
-  Leave:
-    leave_tr: '%prefix You leave templerun and get teleported back to your last location'
-    not_in_tr: '%prefix You are not in templerun'
-  Set:
-    spawn_set: '%prefix Spawn set for the Arena &b%args'
-  Start:
-    is_started: '%prefix The Game is already started'
-    start: '%prefix You started the game'
-  Stop:
-    is_stopped: '%prefixThe Game is already stopped'
-    stop: '%prefix You stop the Game'
-  Kick:
-    kick_player: '%prefix You kicked &b%player'
-    offline: '%prefix This Player is Offline'
-    not_in_tr: '%prefix This Player is not in TempleRun'
-  Give:
-    only_numbers: '%prefix Please only use numbers'
-    give_coins: '%prefix You got &b%amount &7coins'
-  Pickup:
-    disable: '%prefix Coinpickup disabled'
-    enable: '%prefix Coinpickup enabled for the Player with the Permissions templerun.pickup'
-  Delete:
-    not_found: '%prefix Arena not found &b%args'
-    delete: '%prefix Arena deleted &b%arena' 
-  OutOfTR:
-    dropped_out_checkpoint: '%prefix You dropped out of templerun. Try again at your checkpointOut'
-    dropped_out: '%prefix You dropped out of templerun'
-  Sign:
-    successful: '%prefix Sign successful created'
-  Info:
-    noScore: '%prefix You dont have a Score at the Moment'
-    score: '%prefix Coins: &c%coins   &7Time: &c%time'
-    other_no_score: '%prefix This Player hasnt a Score'
-    other_score: '%prefix Coins: &c%coins   &7Time: &c%time'
+  Vault:
+    # Set this Option to true, if you want, that the Player gets money on win
+    usingVault: false
+    # Set this to -1 if you dont want, that the Player gets money
+    winMoney: 30.40
     
+    # If you want, that the Player have to pay for joining Templerun, then set this Option higher then 0
+    # Just work, if you have usingVault: true
+    joinAmount: -1
   
+  Settings:
+    # Magnet means the Magnet like in templerun. Set the Time on Seconds:
+    magnetBonusTime: 5
   
+    # Enable this option, if you want that the walk checker gets enabled.
+    # The checker checks, if someone run like in templerun or not.
+    enableChecker: true
+    # stayTime means, the time your get allowed to stay ( in seconds )
+    stayTime: 2
+    
+    # The Walkspeed in Templerun
+    # Can be set from 0.1 until 1.0
+    walkSpeed: 0.2
+    
+    # Set this option to true, if you want that the player
+    # get full food and full health when he joins templerun
+    updateFoodHealth: false
+    
+    # How much coins must a player have to save an Checkpoint
+    # Example:
+    # The Checkpoint should set every 10 Coins. Then write 10 in option
+    # Set it to -1 if you dont want to set any checkpoints
+    checkpoint: 10
+    
+    # The block you have to walk over, to "fell out of the world"
+    # Use Block-IDs
+    # Blocks which can not be used: Emerald, Diamond, Gold
+    blocks:
+    - 9
+    - 10
+    
+    # All listed commands below, will be useable while playing TempleRun
+    allowedCommands:
+    - /templerun
+    
+    # Set this option to true, if you want, that a player automatically leave the arena, when he fails.
+    # Like walk over a block you typed in below
+    leaveOnFail: false
+    
+    # Enable this, if you want to broadcast if someone complete a arena
+    # %PLAYER = The name of the player
+    # %ARENA = The name of the arena
+    # %TIME = The time he needed to complete the map
+    # %COINS = The gained coins
+    broadcastOnWin: true
+    broadcastMessage: '&5&l%PLAYER &6completed the TempleRun Map &5%ARENA &6in &5%TIME&6. Gained coins: &5%COINS.'
+    
+    # If you want that the players in templerun get showed as a ghost, then set this option to true
+    ghost: false

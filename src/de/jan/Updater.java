@@ -1,43 +1,36 @@
-package TempleRun.Update;
+package de.jan;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.lang.Runnable;
+import java.lang.Thread;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 /**
-* Check dev.bukkit.org to find updates for a given plugin, and download the updates if needed.
-* <p>
-* <b>VERY, VERY IMPORTANT</b>: Because there are no standards for adding auto-update toggles in your plugin's config, this system provides NO CHECK WITH YOUR CONFIG to make sure the user has allowed auto-updating.
-* <br>
-* It is a <b>BUKKIT POLICY</b> that you include a boolean value in your config that prevents the auto-updater from running <b>AT ALL</b>.
-* <br>
-* If you fail to include this option in your config, your plugin will be <b>REJECTED</b> when you attempt to submit it to dev.bukkit.org.
-* <p>
-* An example of a good configuration option would be something similar to 'auto-update: true' - if this value is set to false you may NOT run the auto-updater.
-* <br>
-* If you are unsure about these rules, please read the plugin submission guidelines: http://goo.gl/8iU5l
-*
-* @author H31IX
-*/
+ * Check dev.bukkit.org to find updates for a given plugin, and download the updates if needed.
+ * <p>
+ * <b>VERY, VERY IMPORTANT</b>: Because there are no standards for adding auto-update toggles in your plugin's config, this system provides NO CHECK WITH YOUR CONFIG to make sure the user has allowed auto-updating.
+ * <br>
+ * It is a <b>BUKKIT POLICY</b> that you include a boolean value in your config that prevents the auto-updater from running <b>AT ALL</b>.
+ * <br>
+ * If you fail to include this option in your config, your plugin will be <b>REJECTED</b> when you attempt to submit it to dev.bukkit.org.
+ * <p>
+ * An example of a good configuration option would be something similar to 'auto-update: true' - if this value is set to false you may NOT run the auto-updater.
+ * <br>
+ * If you are unsure about these rules, please read the plugin submission guidelines: http://goo.gl/8iU5l
+ *
+ * @author H31IX
+ */
 
 public class Updater {
 	private Plugin plugin;
@@ -63,71 +56,71 @@ public class Updater {
 	private static final String ITEM = "item";
 
 	/**
-	* Gives the dev the result of the update process. Can be obtained by called getResult().
-	*/
+	 * Gives the dev the result of the update process. Can be obtained by called getResult().
+	 */
 	public enum UpdateResult {
 		/**
-		* The updater found an update, and has readied it to be loaded the next time the server restarts/reloads.
-		*/
+		 * The updater found an update, and has readied it to be loaded the next time the server restarts/reloads.
+		 */
 		SUCCESS,
 		/**
-		* The updater did not find an update, and nothing was downloaded.
-		*/
+		 * The updater did not find an update, and nothing was downloaded.
+		 */
 		NO_UPDATE,
 		/**
-		* The updater found an update, but was unable to download it.
-		*/
+		 * The updater found an update, but was unable to download it.
+		 */
 		FAIL_DOWNLOAD,
 		/**
-		* For some reason, the updater was unable to contact dev.bukkit.org to download the file.
-		*/
+		 * For some reason, the updater was unable to contact dev.bukkit.org to download the file.
+		 */
 		FAIL_DBO,
 		/**
-		* When running the version check, the file on DBO did not contain the a version in the format 'vVersion' such as 'v1.0'.
-		*/
+		 * When running the version check, the file on DBO did not contain the a version in the format 'vVersion' such as 'v1.0'.
+		 */
 		FAIL_NOVERSION,
 		/**
-		* The slug provided by the plugin running the updater was invalid and doesn't exist on DBO.
-		*/
+		 * The slug provided by the plugin running the updater was invalid and doesn't exist on DBO.
+		 */
 		FAIL_BADSLUG,
 		/**
-		* The updater found an update, but because of the UpdateType being set to NO_DOWNLOAD, it wasn't downloaded.
-		*/
+		 * The updater found an update, but because of the UpdateType being set to NO_DOWNLOAD, it wasn't downloaded.
+		 */
 		UPDATE_AVAILABLE
 	}
 
 	/**
-	* Allows the dev to specify the type of update that will be run.
-	*/
+	 * Allows the dev to specify the type of update that will be run.
+	 */
 	public enum UpdateType {
 		/**
-		* Run a version check, and then if the file is out of date, download the newest version.
-		*/
+		 * Run a version check, and then if the file is out of date, download the newest version.
+		 */
 		DEFAULT,
 		/**
-		* Don't run a version check, just find the latest update and download it.
-		*/
+		 * Don't run a version check, just find the latest update and download it.
+		 */
 		NO_VERSION_CHECK,
 		/**
-		* Get information about the version and the download size, but don't actually download anything.
-		*/
+		 * Get information about the version and the download size, but don't actually download anything.
+		 */
 		NO_DOWNLOAD
 	}
 
 	/**
-	* Initialize the updater
-	*
-	* @param plugin
-	* The plugin that is checking for an update.
-	* @param slug
-	* The dev.bukkit.org slug of the project (http://dev.bukkit.org/server-mods/SLUG_IS_HERE)
-	* @param file
-	* The file that the plugin is running from, get this by doing this.getFile() from within your main class.
-	* @param type
-	* Specify the type of update this will be. See {@link UpdateType}
-	* @param announce
-	* True if the program should announce the progress of new updates in console
-	*/
+	 * Initialize the updater
+	 *
+	 * @param plugin
+	 *            The plugin that is checking for an update.
+	 * @param slug
+	 *            The dev.bukkit.org slug of the project (http://dev.bukkit.org/server-mods/SLUG_IS_HERE)
+	 * @param file
+	 *            The file that the plugin is running from, get this by doing this.getFile() from within your main class.
+	 * @param type
+	 *            Specify the type of update this will be. See {@link UpdateType}
+	 * @param announce
+	 *            True if the program should announce the progress of new updates in console
+	 */
 	public Updater(Plugin plugin, String slug, File file, UpdateType type, boolean announce) {
 		this.plugin = plugin;
 		this.type = type;
@@ -147,33 +140,33 @@ public class Updater {
 	}
 
 	/**
-	* Get the result of the update process.
-	*/
+	 * Get the result of the update process.
+	 */
 	public Updater.UpdateResult getResult() {
 		waitForThread();
 		return result;
 	}
 
 	/**
-	* Get the total bytes of the file (can only be used after running a version check or a normal run).
-	*/
+	 * Get the total bytes of the file (can only be used after running a version check or a normal run).
+	 */
 	public long getFileSize() {
 		waitForThread();
 		return totalSize;
 	}
 
 	/**
-	* Get the version string latest file avaliable online.
-	*/
+	 * Get the version string latest file avaliable online.
+	 */
 	public String getLatestVersionString() {
 		waitForThread();
 		return versionTitle;
 	}
 
 	/**
-	* As the result of Updater output depends on the thread's completion, it is necessary to wait for the thread to finish
-	* before alloowing anyone to check the result.
-	*/
+	 * As the result of Updater output depends on the thread's completion, it is necessary to wait for the thread to finish
+	 * before alloowing anyone to check the result.
+	 */
 	public void waitForThread() {
 		if (thread.isAlive()) {
 			try {
@@ -185,8 +178,8 @@ public class Updater {
 	}
 
 	/**
-	* Save an update from dev.bukkit.org into the server's update folder.
-	*/
+	 * Save an update from dev.bukkit.org into the server's update folder.
+	 */
 	private void saveFile(File folder, String file, String u) {
 		if (!folder.exists()) {
 			folder.mkdir();
@@ -244,8 +237,8 @@ public class Updater {
 	}
 
 	/**
-	* Part of Zip-File-Extractor, modified by H31IX for use with Bukkit
-	*/
+	 * Part of Zip-File-Extractor, modified by H31IX for use with Bukkit
+	 */
 	private void unzip(String file) {
 		try {
 			File fSourceZip = new File(file);
@@ -320,8 +313,8 @@ public class Updater {
 	}
 
 	/**
-	* Check if the name of a jar is one of the plugins currently installed, used for extracting the correct files out of a zip.
-	*/
+	 * Check if the name of a jar is one of the plugins currently installed, used for extracting the correct files out of a zip.
+	 */
 	public boolean pluginFile(String name) {
 		for (File file : new File("plugins").listFiles()) {
 			if (file.getName().equals(name)) {
@@ -332,8 +325,8 @@ public class Updater {
 	}
 
 	/**
-	* Obtain the direct download file url from the file's page.
-	*/
+	 * Obtain the direct download file url from the file's page.
+	 */
 	private String getFile(String link) {
 		String download = null;
 		try {
@@ -376,8 +369,8 @@ public class Updater {
 	}
 
 	/**
-	* Check to see if the program should continue by evaluation whether the plugin is already updated, or shouldn't be updated
-	*/
+	 * Check to see if the program should continue by evaluation whether the plugin is already updated, or shouldn't be updated
+	 */
 	private boolean versionCheck(String title) {
 		if (type != UpdateType.NO_VERSION_CHECK) {
 			String version = plugin.getDescription().getVersion();
@@ -408,8 +401,8 @@ public class Updater {
 	}
 
 	/**
-	* Used to calculate the version string as an Integer
-	*/
+	 * Used to calculate the version string as an Integer
+	 */
 	private Integer calVer(String s) throws NumberFormatException {
 		if (s.contains(".")) {
 			StringBuilder sb = new StringBuilder();
@@ -425,8 +418,8 @@ public class Updater {
 	}
 
 	/**
-	* Evaluate whether the version number is marked showing that it should not be updated by this program
-	*/
+	 * Evaluate whether the version number is marked showing that it should not be updated by this program
+	 */
 	private boolean hasTag(String version) {
 		for (String string : noUpdateTag) {
 			if (version.contains(string)) {
@@ -437,8 +430,8 @@ public class Updater {
 	}
 
 	/**
-	* Part of RSS Reader by Vogella, modified by H31IX for use with Bukkit
-	*/
+	 * Part of RSS Reader by Vogella, modified by H31IX for use with Bukkit
+	 */
 	private boolean readFeed() {
 		try {
 			// Set header values intial to the empty string
@@ -485,8 +478,8 @@ public class Updater {
 	}
 
 	/**
-	* Open the RSS feed
-	*/
+	 * Open the RSS feed
+	 */
 	private InputStream read() {
 		try {
 			return url.openStream();
