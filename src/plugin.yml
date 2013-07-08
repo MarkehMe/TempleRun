@@ -1,12 +1,10 @@
 name: TempleRun
-version: 2.6.1
-author: xapfeltortexp
-website: www.LostForce.com
-dev-url: http://dev.bukkit.org/server-mods/templerun
-
-main: TempleRun.TempleRun
+version: 1.3.0
+author: jan
+website: www.Lostforce.com
+main: de.jan.TempleRun
 
 commands:
   templerun:
-    description: TempleRun Command
-    aliases: tr
+    description: "The ultiate TempleRun Plugin"
+    aliases: [tr]
